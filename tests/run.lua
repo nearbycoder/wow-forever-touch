@@ -264,6 +264,68 @@ step("hide default bars", function()
     check(_G.PetActionBarFrame:GetParent() == _G.UIParent, "pet bar kept")
 end)
 
+step("touch fixes applied at login", function()
+    check(M.cvars.rawMouseEnable == "0", "raw mouse input turned off")
+    check(M.cvars.ClipCursor == "0", "cursor no longer clipped")
+    check(M.cvars.gxCursor == "1", "hardware cursor on")
+    check(ns.db.touchFixBackup.rawMouseEnable == "1", "original value kept for undo")
+    _G.SlashCmdList.FOREVERTOUCH("touchfix off")
+    check(M.cvars.rawMouseEnable == "1" and M.cvars.ClipCursor == "1", "/ft touchfix off restores settings")
+    _G.SlashCmdList.FOREVERTOUCH("touchfix")
+    check(M.cvars.rawMouseEnable == "0", "/ft touchfix re-applies")
+end)
+
+step("touch test: taps on target", function()
+    _G.SlashCmdList.FOREVERTOUCH("touchtest")
+    local f = _G.ForeverTouchTouchTest
+    check(f:IsShown(), "touch test opens")
+    for i = 1, 3 do
+        local x, y = f.targets[i]:GetCenter()
+        M.cursorPos = { x + 5, y - 5 }
+        f:Click("LeftButton", true)
+    end
+    check(ns.db.lastTouchTest == "ok", "accurate taps -> ok verdict (got " .. tostring(ns.db.lastTouchTest) .. ")")
+    f:Click("LeftButton", true)
+    check(not f:IsShown(), "tap after result closes")
+end)
+
+step("touch test: taps stuck at cursor", function()
+    ns.ShowTouchTest()
+    local f = _G.ForeverTouchTouchTest
+    M.cursorPos = { 896, 384 } -- cursor never moves to the finger
+    for _ = 1, 3 do f:Click("LeftButton", true) end
+    check(ns.db.lastTouchTest == "cursor", "stale cursor taps -> cursor verdict")
+    f:Hide()
+end)
+
+step("controller test", function()
+    M.cvars.GamePadEnable = "1"
+    M.pad.devices = {}
+    _G.SlashCmdList.FOREVERTOUCH("padtest")
+    local f = _G.ForeverTouchPadTest
+    check(f:IsShown(), "pad test opens")
+    check(ns.db.lastPadTest == "none", "no controller -> 'none' verdict")
+    check(M.padCursor == false, "stick handed back to movement")
+
+    M.pad.devices = { "DroidDeck Virtual Pad" }
+    M.pad.stick = { x = 0, y = 0 }
+    f:Begin()
+    for _ = 1, 30 do M.fire(f, "OnUpdate", 0.5) end
+    check(ns.db.lastPadTest == "still", "controller but no stick motion -> 'still'")
+
+    f:Begin()
+    M.pad.stick = { x = 0.1, y = 0.9 }
+    for _ = 1, 10 do M.fire(f, "OnUpdate", 0.1) end
+    check(ns.db.lastPadTest == "ok", "stick moving -> 'ok' (got " .. tostring(ns.db.lastPadTest) .. ")")
+
+    M.cvars.GamePadEnable = "0"
+    f:Begin()
+    check(ns.db.lastPadTest == "off" and f.enable:IsShown(), "support off -> offers to turn it on")
+    f.enable:Click()
+    check(M.cvars.GamePadEnable == "1", "'Turn it on' enables controller support")
+    f:Hide()
+end)
+
 step("slash", function()
     _G.SlashCmdList.FOREVERTOUCH("edit")
     check(ns.editing, "/ft edit")

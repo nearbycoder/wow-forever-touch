@@ -5,7 +5,7 @@ local ADDON, ns = ...
 _G.ForeverTouch = ns
 
 ns.name = ADDON
-ns.version = "1.0.0"
+ns.version = "1.0.1"
 ns.media = "Interface\\AddOns\\" .. ADDON .. "\\media\\"
 
 -- Theme -----------------------------------------------------------------------

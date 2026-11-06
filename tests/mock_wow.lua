@@ -14,6 +14,7 @@ M.secureDepth = 0
 M.cvars = {
     GamePadEnable = "0", autoInteract = "0", interactOnLeftClick = "0", autoLootDefault = "0",
     ActionButtonUseKeyDown = "1", countdownForCooldowns = "0",
+    rawMouseEnable = "1", ClipCursor = "1", gxCursor = "0",
 }
 M.bindings = {}
 M.actions = {}    -- slot -> { texture, kind, id }
@@ -162,6 +163,7 @@ function Frame:SetAlpha(a) self._alpha = a end
 function Frame:GetAlpha() return self._alpha end
 function Frame:SetScale(s) guard(self, "SetScale") self._scale = s end
 function Frame:GetScale() return self._scale or 1 end
+function Frame:GetEffectiveScale() return 1 end
 function Frame:SetFrameStrata(s) self._strata = s end
 function Frame:SetFrameLevel(l) self._level = l end
 function Frame:GetFrameLevel() return self._level or 1 end
@@ -401,6 +403,21 @@ function M.install(opts)
         SetCVar = G.SetCVar,
         GetCVarInfo = function(k) return M.cvars[k] end,
     }
+    M.pad = { devices = {}, stick = { x = 0, y = 0 } }
+    G.C_GamePad = {
+        IsEnabled = function() return M.cvars.GamePadEnable == "1" end,
+        GetAllDeviceIDs = function() local t = {} for i in ipairs(M.pad.devices) do t[i] = i end return t end,
+        GetActiveDeviceID = function() return #M.pad.devices > 0 and 1 or -1 end,
+        GetCombinedDeviceID = function() return #M.pad.devices > 0 and 1 or -1 end,
+        GetDeviceRawState = function(id) return { name = M.pad.devices[id] } end,
+        GetDeviceMappedState = function(id)
+            if not M.pad.devices[id] then return nil end
+            return { name = M.pad.devices[id], sticks = { { x = M.pad.stick.x, y = M.pad.stick.y } } }
+        end,
+    }
+    G.SetGamePadCursorControl = function(on) M.padCursor = on end
+    M.cursorPos = { 0, 0 }
+    G.GetCursorPosition = function() return M.cursorPos[1], M.cursorPos[2] end
     G.GetPhysicalScreenSize = function() return M.screen[1], M.screen[2] end
     G.DEFAULT_CHAT_FRAME = { AddMessage = function(_, m) log("chat: %s", m) end }
     G.geterrorhandler = function() return function(e) error(e, 0) end end

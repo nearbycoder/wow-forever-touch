@@ -130,6 +130,9 @@ local function buildPanel()
         toggles[#toggles + 1] = { "Controller movement", "DroidDeck's stick runs, A jumps.", ns.ControllerMovementOn,
             function(v) ns.SetControllerMovement(v) end }
     end
+    toggles[#toggles + 1] = { "Touch input fixes", "Raw mouse off, cursor unlocked, cursor kept visible.",
+        function() return not ns.db.touchFixOff end,
+        function(v) if v then ns.ApplyTouchFixes() else ns.RevertTouchFixes() end end }
     if ns.CVarExists("interactOnLeftClick") then
         toggles[#toggles + 1] = { "Tap to interact", "Talk, loot and use objects with one tap.",
             function() return ns.GetCVarBool("interactOnLeftClick") end,
@@ -161,6 +164,11 @@ local function buildPanel()
         ns.Print("Layout reset for the %s.", ns.profileLabels[ns.ActiveProfile()])
     end)
     reset:SetPoint("LEFT", setup, "RIGHT", 8, 0)
+    local touchTest = W.Button(f, 150, 48, "Touch test", function()
+        f:Hide()
+        ns.ShowTouchTest()
+    end)
+    touchTest:SetPoint("LEFT", reset, "RIGHT", 8, 0)
 
     function f:Refresh()
         detected:SetText("Now: " .. ns.profileLabels[ns.ActiveProfile()])
@@ -211,8 +219,18 @@ SlashCmdList.FOREVERTOUCH = function(msg)
         if InCombatLockdown() then ns.Print("Leave combat first.") return end
         ns.ResetLayout()
         ns.Print("Layout reset.")
+    elseif msg == "padtest" or msg == "controller" or msg == "stick" then
+        ns.ShowPadTest()
+    elseif msg == "touchtest" or msg == "test" then
+        ns.ShowTouchTest()
+    elseif msg == "touchfix" or msg == "touchfix on" then
+        local changed = ns.ApplyTouchFixes()
+        ns.Print("Touch fixes on (%d setting%s changed). Restart the game for the cursor change to apply.", #changed, #changed == 1 and "" or "s")
+    elseif msg == "touchfix off" then
+        ns.Print("Touch fixes undone (%d setting%s restored).", ns.RevertTouchFixes(), "s")
     elseif msg == "help" then
-        ns.Print("/ft - settings, /ft edit - move and assign buttons, /ft setup - setup guide, /ft reset - reset layout")
+        ns.Print("/ft - settings, /ft edit - move and assign buttons, /ft setup - setup guide, /ft reset - reset layout,"
+            .. " /ft touchtest - check where taps land, /ft padtest - check the movement stick, /ft touchfix [off] - touch input settings")
     else
         ns.ShowSettings()
     end

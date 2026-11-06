@@ -163,6 +163,9 @@ The setup guide also offers *Auto loot*, *Cast the moment you touch* and *Cooldo
 | `/ft edit` | Edit layout: move, resize and assign buttons |
 | `/ft setup` | Run the setup guide again |
 | `/ft reset` | Reset the current screen's layout |
+| `/ft touchtest` | Check where your taps land (shows the game's cursor and your taps) |
+| `/ft padtest` | Check the movement stick: does WoW see a controller, and does the stick move? |
+| `/ft touchfix` / `/ft touchfix off` | Re-apply or undo the touch input settings |
 | `/ft help` | List commands |
 
 ## Limits worth knowing
@@ -171,15 +174,36 @@ The setup guide also offers *Auto loot*, *Cast the moment you touch* and *Cooldo
 - **Changes are locked during combat.** Blizzard locks secure buttons in combat. Casting, page flips and the menu all still work, but assigning or moving buttons doesn't. Edit mode closes by itself when a fight starts.
 - **Multi-touch.** DroidDeck handles its stick separately, so running while casting works. Two taps on WoW buttons at the very same moment arrive as one mouse, though.
 - **Auto fold switching** reads the game's screen size. If DroidDeck runs the game at a fixed resolution, choose *Folded* or *Unfolded* in settings yourself.
-- **Not yet verified on a real device.** The logic is covered by the mock-client test suite, and testers with WoW: Forever on Android are wanted.
+- **Early real-device testing.** First reports from a Galaxy Z Fold 8 found the touch and stick issues covered in [Troubleshooting](#troubleshooting). More testers with WoW: Forever on Android are wanted.
 
 ## Troubleshooting
+
+### Touching shows the cursor but nothing gets pressed
+Taps are clicking wherever the cursor already was, not where your finger is. Type `/ft touchtest` (open DroidDeck's keyboard) to confirm: gold dots show where the game felt each tap.
+
+1. **DroidDeck → Touch mode → Direct** (not Touchpad).
+2. **Update DroidDeck.** Preview builds from before Nov 5 2026 send every touch through the touchpad while a game holds the pointer, even in Direct mode. This was fixed in [DroidDeck #2133](https://github.com/Droid-Deck/DroidDeck/pull/2133). Stable 0.6.9 doesn't have this problem.
+3. Forever Touch 1.0.1+ also changes three game settings once at login: raw mouse input off, cursor not locked to the window, and hardware cursor on. Together these make the cursor jump to your finger. Restart the game once afterwards. Undo with `/ft touchfix off`.
+
+### The left stick doesn't move my character
+Addons can't move characters, so the stick has to reach WoW **as a controller**. Type `/ft padtest` (or use **Test the stick** in setup step 2). It shows whether WoW sees a controller and draws your stick live:
+
+| Test result | What to do |
+|---|---|
+| *Controller support is off* | Tap **Turn it on**, then restart the game once. |
+| *WoW doesn't see any controller* | Restart the game once. Make sure DroidDeck's **on-screen controller** is on (not just touch). In Steam, set this game's controller layout to **Gamepad**. |
+| *Sees a controller, but the stick isn't moving it* | DroidDeck's stick is feeding a different device. Set Steam Input to **Gamepad**, or use the key fallback below. |
+| *WoW receives your left stick* but you still don't move | Close any open game windows (bags, map…). While one is open, the stick can drive the controller cursor instead. |
+
+**Key fallback (always works):** in Steam, set this game's controller layout to **Keyboard (WASD) and Mouse** and map A to Space. The stick then presses W A S D like a keyboard, with no WoW controller support needed. Turn *Controller movement* off in `/ft` settings if you use this.
+
+### Everything else
 
 | Problem | Fix |
 |---|---|
 | The addon isn't in the AddOns list | Check the folder name. It must be exactly `Interface/AddOns/ForeverTouch/ForeverTouch.toc`, not nested twice. |
 | "Out of date" | Tick *Load out of date AddOns*, or run `tools/set-interface.sh` ([details](#out-of-date-warning)). |
-| The stick moves the mouse pointer | Set the Steam Input layout for the game to **Gamepad**. |
+| The stick moves the mouse pointer | Set the Steam Input layout for the game to **Gamepad** (or the key fallback above). |
 | A doesn't jump | Run `/ft setup`, go to step 2 and tap *Turn on controller movement* again. |
 | Taps cast twice or not at all | Toggle *Cast the moment you touch* in `/ft setup` step 3. |
 | Buttons are off screen after unfolding | `/ft reset` resets that screen's layout. |
@@ -205,6 +229,8 @@ sh tools/preview/capture.sh         # regenerate docs/images/* (screenshots + de
 - edit mode: dragging, resizing, swapping buttons, and closing automatically on combat
 - left-handed mirroring, fold/unfold switching, and layout changes deferred until after combat
 - setup: controller movement and the A = Jump binding
+- touch input fixes (apply/undo) and the touch test verdicts
+- the controller test: no controller, stick not moving, stick working, support off
 
 The suite runs in all three click modes: cast on press, cast on release, and legacy clients.
 
