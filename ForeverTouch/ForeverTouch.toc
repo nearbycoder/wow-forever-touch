@@ -2,7 +2,7 @@
 ## Title: |cffdb2777Forever|r Touch
 ## Notes: Touch screen controls for World of Warcraft: Forever - big spell wheel, tap menus, and guided setup for phones and foldables.
 ## Author: Josh Hamilton
-## Version: 1.0.1
+## Version: 1.0.2
 ## SavedVariables: ForeverTouchDB
 ## IconTexture: Interface\Icons\INV_Misc_Gear_01
 ## Category: Action Bars

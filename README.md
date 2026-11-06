@@ -204,6 +204,7 @@ Addons can't move characters, so the stick has to reach WoW **as a controller**.
 | The addon isn't in the AddOns list | Check the folder name. It must be exactly `Interface/AddOns/ForeverTouch/ForeverTouch.toc`, not nested twice. |
 | "Out of date" | Tick *Load out of date AddOns*, or run `tools/set-interface.sh` ([details](#out-of-date-warning)). |
 | The stick moves the mouse pointer | Set the Steam Input layout for the game to **Gamepad** (or the key fallback above). |
+| A menu tile does nothing | Update to 1.0.2+. Tiles now check that their window actually opened and open it directly if not. If a tile still fails, the reason is printed in chat. |
 | A doesn't jump | Run `/ft setup`, go to step 2 and tap *Turn on controller movement* again. |
 | Taps cast twice or not at all | Toggle *Cast the moment you touch* in `/ft setup` step 3. |
 | Buttons are off screen after unfolding | `/ft reset` resets that screen's layout. |
@@ -226,6 +227,7 @@ sh tools/preview/capture.sh         # regenerate docs/images/* (screenshots + de
 - casting, page flips in combat and stance paging
 - the spell picker: rank dedupe, items, macros, assigning and clearing
 - the menu in combat: secure micro button clicks, closing after a tile, tapping outside
+- micro buttons that act on mouse-up (the Game menu): fallback, self-check and error reporting
 - edit mode: dragging, resizing, swapping buttons, and closing automatically on combat
 - left-handed mirroring, fold/unfold switching, and layout changes deferred until after combat
 - setup: controller movement and the A = Jump binding

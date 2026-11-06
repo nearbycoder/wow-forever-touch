@@ -8,22 +8,40 @@ local C = ns.color
 
 local TILE, GAP, COLS = 104, 12, 4
 
--- { label, icon, micro buttons to click (first that exists), Lua fallback }
+-- Game menu: ToggleGameMenu closes other windows first (Escape semantics), so
+-- fall back to showing the frame directly, and say so if nothing worked.
+local function toggleGameMenu()
+    local f = GameMenuFrame
+    if f and f:IsShown() then
+        if HideUIPanel then HideUIPanel(f) else f:Hide() end
+        return
+    end
+    if ToggleGameMenu then pcall(ToggleGameMenu) end
+    if f and not f:IsShown() and ShowUIPanel then pcall(ShowUIPanel, f) end
+    if not f or not f:IsShown() then
+        ns.Print("Couldn't open the game menu - press Escape on DroidDeck's keyboard.")
+    end
+end
+
+-- { label, icon, micro buttons to click (first that exists), Lua fallback,
+--   windows the tile should toggle (used to detect a micro click that did nothing) }
 local TILES = {
     { "Character", "Interface\\Icons\\INV_Chest_Cloth_17", { "CharacterMicroButton" },
-        function() ToggleCharacter("PaperDollFrame") end },
+        function() ToggleCharacter("PaperDollFrame") end, { "CharacterFrame" } },
     { "Bags", "Interface\\Icons\\INV_Misc_Bag_08", nil,
         function() ToggleAllBags() end },
     { "Spellbook", "Interface\\Icons\\INV_Misc_Book_09", { "SpellbookMicroButton", "PlayerSpellsMicroButton" },
-        function() if ToggleSpellBook then ToggleSpellBook(BOOKTYPE_SPELL or "spell") end end },
+        function() if ToggleSpellBook then ToggleSpellBook(BOOKTYPE_SPELL or "spell") end end,
+        { "SpellBookFrame", "PlayerSpellsFrame" } },
     { "Talents", "Interface\\Icons\\Ability_Marksmanship", { "TalentMicroButton", "PlayerSpellsMicroButton" },
-        function() if ToggleTalentFrame then ToggleTalentFrame() end end },
+        function() if ToggleTalentFrame then ToggleTalentFrame() end end,
+        { "TalentFrame", "PlayerTalentFrame", "PlayerSpellsFrame" } },
     { "Quests", "Interface\\Icons\\INV_Misc_Note_01", { "QuestLogMicroButton" },
-        function() if ToggleQuestLog then ToggleQuestLog() end end },
+        function() if ToggleQuestLog then ToggleQuestLog() end end, { "QuestLogFrame", "QuestMapFrame" } },
     { "Map", "Interface\\Icons\\INV_Misc_Map_01", { "WorldMapMicroButton" },
-        function() if ToggleWorldMap then ToggleWorldMap() end end },
+        function() if ToggleWorldMap then ToggleWorldMap() end end, { "WorldMapFrame" } },
     { "Social", "Interface\\Icons\\INV_Letter_02", { "SocialsMicroButton" },
-        function() if ToggleFriendsFrame then ToggleFriendsFrame() end end },
+        function() if ToggleFriendsFrame then ToggleFriendsFrame() end end, { "FriendsFrame" } },
     { "Chat", "Interface\\Icons\\INV_Scroll_03", nil,
         function()
             if ChatFrame_OpenChat then ChatFrame_OpenChat("") end
@@ -36,7 +54,7 @@ local TILES = {
     { "Touch settings", "Interface\\Icons\\INV_Misc_Gear_01", nil,
         function() ns.ShowSettings() end },
     { "Game menu", "Interface\\Icons\\INV_Misc_QuestionMark", { "MainMenuMicroButton" },
-        function() if ToggleGameMenu then ToggleGameMenu() end end },
+        toggleGameMenu, { "GameMenuFrame" } },
 }
 
 local TOGGLE_ONCLICK = [[
@@ -53,10 +71,30 @@ ns.snippets.MENU_CLOSE = CLOSE_ONCLICK
 ns.snippets.MENU_TILE_PRE = TILE_PRE
 ns.snippets.MENU_TILE_POST = TILE_POST
 
+-- Only micro buttons that act in OnClick can be clicked from code; some (the
+-- Game menu one in Classic-style UIs) act in OnMouseUp, so a secure click
+-- would do nothing.
 local function findMicro(names)
     if not names then return nil end
     for _, n in ipairs(names) do
-        if _G[n] then return _G[n] end
+        local b = _G[n]
+        if b and b.GetScript and b:GetScript("OnClick") then return b end
+    end
+end
+
+local function windowsShown(names)
+    local state = {}
+    for i, n in ipairs(names or {}) do
+        local f = _G[n]
+        state[i] = (f and f.IsShown and f:IsShown()) and true or false
+    end
+    return state
+end
+
+local function runTile(def)
+    local ok, err = pcall(def[4])
+    if not ok then
+        ns.Print("%s didn't open: %s", def[1], tostring(err))
     end
 end
 
@@ -96,8 +134,26 @@ local function createTile(panel, i, def)
     if not micro then
         tile:HookScript("PostClick", function(_, _, down)
             if down then return end
-            local ok, err = pcall(def[4])
-            if not ok then geterrorhandler()(err) end
+            -- Next frame, after the secure wrapper has closed the menu.
+            C_Timer.After(0, function() runTile(def) end)
+        end)
+    elseif def[5] then
+        -- Self-check: if Blizzard's button didn't toggle its window, do it ourselves.
+        local before
+        tile:HookScript("PreClick", function(_, _, down)
+            if (down and true or false) == ns.useKeyDownNow() then before = windowsShown(def[5]) end
+        end)
+        tile:HookScript("PostClick", function(_, _, down)
+            if not before then return end
+            local snapshot = before
+            before = nil
+            C_Timer.After(0, function()
+                local after = windowsShown(def[5])
+                for i = 1, #after do
+                    if after[i] ~= snapshot[i] then return end
+                end
+                runTile(def)
+            end)
         end)
     end
 

@@ -143,6 +143,7 @@ step("menu works in combat", function()
     clearLog()
     _G.ForeverTouchMenuTile2:Click("LeftButton", true)
     _G.ForeverTouchMenuTile2:Click("LeftButton", false)
+    M.RunTimers(1)
     local n = 0
     for _, l in ipairs(M.log) do if l == "ToggleAllBags" then n = n + 1 end end
     check(n == 1, "Bags tile toggles bags exactly once (got " .. n .. ")")
@@ -151,6 +152,54 @@ step("menu works in combat", function()
     _G.ForeverTouchMenuCatcher:Click("LeftButton", false)
     check(not _G.ForeverTouchMenu:IsShown(), "tapping outside closes the menu")
     M.combat = false
+end)
+
+step("game menu tile (micro button acts on mouse up)", function()
+    local function tap(b) b:Click("LeftButton", true) b:Click("LeftButton", false) M.RunTimers(1) end
+    local gameTile
+    for i = 1, 12 do
+        local t = _G["ForeverTouchMenuTile" .. i]
+        if t and t:GetAttribute("type") ~= "click" and i == 12 then gameTile = t end
+    end
+    check(gameTile ~= nil, "Game menu tile does not rely on clicking MainMenuMicroButton")
+    _G.ForeverTouchMenuButton:Click("LeftButton", false)
+    tap(_G.ForeverTouchMenuTile12)
+    check(_G.GameMenuFrame:IsShown(), "Game menu tile opens the game menu")
+    check(not _G.ForeverTouchMenu:IsShown(), "menu closed")
+    _G.ForeverTouchMenuButton:Click("LeftButton", false)
+    tap(_G.ForeverTouchMenuTile12)
+    check(not _G.GameMenuFrame:IsShown(), "tapping again closes the game menu")
+
+    -- Character: the micro click works, so the self-check must not toggle it back.
+    _G.CharacterFrame:Hide()
+    _G.ForeverTouchMenuButton:Click("LeftButton", false)
+    tap(_G.ForeverTouchMenuTile1)
+    check(_G.CharacterFrame:IsShown(), "Character tile opens character frame exactly once")
+
+    -- If a micro button silently does nothing, the fallback kicks in.
+    local micro = _G.CharacterMicroButton
+    local orig = micro._scripts.OnClick
+    micro._scripts.OnClick = function() end
+    _G.CharacterFrame:Hide()
+    _G.ToggleCharacter = function() _G.CharacterFrame:Show() end
+    _G.ForeverTouchMenuButton:Click("LeftButton", false)
+    tap(_G.ForeverTouchMenuTile1)
+    check(_G.CharacterFrame:IsShown(), "fallback opens the window when the micro click did nothing")
+    micro._scripts.OnClick = orig
+    _G.CharacterFrame:Hide()
+
+    -- Errors in a tile are reported in chat instead of failing silently.
+    clearLog()
+    local show = ns.ShowSettings
+    ns.ShowSettings = function() error("boom") end
+    _G.ForeverTouchMenuButton:Click("LeftButton", false)
+    tap(_G.ForeverTouchMenuTile11)
+    check(logHas("Touch settings didn't open"), "tile errors are shown in chat")
+    ns.ShowSettings = show
+    _G.ForeverTouchMenuButton:Click("LeftButton", false)
+    tap(_G.ForeverTouchMenuTile11)
+    check(_G.ForeverTouchSettings and _G.ForeverTouchSettings:IsShown(), "Touch settings tile opens settings")
+    _G.ForeverTouchSettings:Hide()
 end)
 
 step("utility buttons", function()

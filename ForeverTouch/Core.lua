@@ -5,7 +5,7 @@ local ADDON, ns = ...
 _G.ForeverTouch = ns
 
 ns.name = ADDON
-ns.version = "1.0.1"
+ns.version = "1.0.2"
 ns.media = "Interface\\AddOns\\" .. ADDON .. "\\media\\"
 
 -- Theme -----------------------------------------------------------------------
@@ -26,6 +26,12 @@ ns.interface = select(4, GetBuildInfo()) or 0
 -- Modern secure templates (10.0+ engine) fire on press or release depending on
 -- the ActionButtonUseKeyDown CVar, so buttons must listen for both.
 ns.dualClick = (SecureActionButtonMixin ~= nil)
+
+-- True when secure buttons act on press (the click with down == true).
+function ns.useKeyDownNow()
+    if not ns.dualClick then return false end
+    return ns.GetCVarBool("ActionButtonUseKeyDown") == true
+end
 
 -- Utilities -------------------------------------------------------------------
 function ns.Print(fmt, ...)

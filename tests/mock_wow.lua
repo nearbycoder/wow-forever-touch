@@ -515,13 +515,28 @@ function M.install(opts)
     G.SaveBindings = function() log("SaveBindings") end
     G.GetCurrentBindingSet = function() return 1 end
     G.IsShiftKeyDown = function() return false end
-    G.HideUIPanel = function() end
     G.InterfaceOptions_AddCategory = function(f) M.optionsCategory = f end
     -- Micro buttons the menu clicks
+    -- Windows the micro buttons toggle.
+    for _, n in ipairs({ "CharacterFrame", "GameMenuFrame" }) do
+        local f = M.CreateFrame("Frame", n, G.UIParent)
+        f._shown = false
+    end
+    G.ShowUIPanel = function(f) f:Show() end
+    G.HideUIPanel = function(f) f:Hide() end
+    G.ToggleGameMenu = function() log("ToggleGameMenu") G.GameMenuFrame:SetShown(not G.GameMenuFrame:IsShown()) end
     for _, n in ipairs({ "CharacterMicroButton", "SpellbookMicroButton", "TalentMicroButton", "QuestLogMicroButton",
         "WorldMapMicroButton", "SocialsMicroButton", "MainMenuMicroButton" }) do
         local b = M.CreateFrame("Button", n, G.UIParent)
-        b:SetScript("OnClick", function() log("%s clicked", n) end)
+        if n == "MainMenuMicroButton" then
+            -- Like Classic FrameXML: acts on mouse up, has no OnClick, so Click() does nothing.
+            b:SetScript("OnMouseUp", function() G.ToggleGameMenu() end)
+        else
+            b:SetScript("OnClick", function()
+                log("%s clicked", n)
+                if n == "CharacterMicroButton" then G.CharacterFrame:SetShown(not G.CharacterFrame:IsShown()) end
+            end)
+        end
     end
     for _, n in ipairs({ "MainMenuBar", "MultiBarBottomLeft", "MultiBarBottomRight", "MultiBarLeft", "MultiBarRight", "PetActionBarFrame" }) do
         M.CreateFrame("Frame", n, G.UIParent)
