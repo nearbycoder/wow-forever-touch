@@ -6,7 +6,7 @@ local W = ns.W
 local C = ns.color
 
 local COLS, ROWS = 6, 3
-local CELL_W, CELL_H, ICON = 96, 92, 50
+local CELL_W, CELL_H, ICON = 96, 98, 50
 local PER_PAGE = COLS * ROWS
 
 local BOOK = BOOKTYPE_SPELL or "spell"
@@ -155,7 +155,7 @@ local picker
 
 local function buildPicker()
     local width = COLS * CELL_W + 48
-    local height = ROWS * CELL_H + 214
+    local height = ROWS * CELL_H + 236
     local f = W.Panel("ForeverTouchPicker", UIParent, width, height, "Choose an action")
     f:SetPoint("CENTER")
     f:SetFrameStrata("FULLSCREEN_DIALOG")
@@ -168,8 +168,8 @@ local function buildPicker()
 
     -- Tabs row (rebuilt each time it opens, spellbook tabs vary by class)
     f.tabBar = CreateFrame("Frame", nil, f)
-    f.tabBar:SetPoint("TOPLEFT", 20, -74)
-    f.tabBar:SetPoint("TOPRIGHT", -20, -74)
+    f.tabBar:SetPoint("TOPLEFT", 20, -86)
+    f.tabBar:SetPoint("TOPRIGHT", -20, -86)
     f.tabBar:SetHeight(40)
     f.tabButtons = {}
 
@@ -179,23 +179,25 @@ local function buildPicker()
         cell:SetSize(CELL_W - 8, CELL_H - 8)
         local col = (i - 1) % COLS
         local row = math.floor((i - 1) / COLS)
-        cell:SetPoint("TOPLEFT", 24 + col * CELL_W, -124 - row * CELL_H)
-        local hl = W.Color(cell, "HIGHLIGHT", 1, 1, 1, 0.07)
-        hl:SetAllPoints()
-        local press = W.Color(cell, "BACKGROUND", C.accent[1], C.accent[2], C.accent[3], 0)
-        press:SetAllPoints()
+        cell:SetPoint("TOPLEFT", 24 + col * CELL_W, -140 - row * CELL_H)
+        W.RoundRect(cell, "BACKGROUND", 12, 1, 1, 1, 0.04, 0)
+        local press = W.RoundRect(cell, "BACKGROUND", 12, C.accent[1], C.accent[2], C.accent[3], 0, 1)
+        local shadow = W.Tex(cell, "BORDER", ns.media .. "soft", 0, 0, 0, 0.5)
+        shadow:SetSize(ICON + 22, ICON + 22)
+        shadow:SetPoint("TOP", 0, 2)
         cell.icon = cell:CreateTexture(nil, "ARTWORK")
         cell.icon:SetSize(ICON, ICON)
-        cell.icon:SetPoint("TOP", 0, -4)
+        cell.icon:SetPoint("TOP", 0, -8)
         cell.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+        W.MaskIcon(cell.icon, cell)
         cell.name = W.Font(cell, 11)
         cell.name:SetPoint("TOP", cell.icon, "BOTTOM", 0, -4)
         cell.name:SetWidth(CELL_W - 10)
         cell.name:SetHeight(28)
         cell.name:SetJustifyV("TOP")
         cell.name:SetJustifyH("CENTER")
-        cell:SetScript("OnMouseDown", function() press:SetAlpha(0.35) end)
-        cell:SetScript("OnMouseUp", function() press:SetAlpha(0) end)
+        cell:SetScript("OnMouseDown", function() press:SetColor(C.accent[1], C.accent[2], C.accent[3], 0.45) end)
+        cell:SetScript("OnMouseUp", function() press:SetColor(C.accent[1], C.accent[2], C.accent[3], 0) end)
         cell:SetScript("OnClick", function(self)
             if not self.entry or not f.slot then return end
             if ns.AssignToSlot(f.slot, self.entry.pickup) then
@@ -210,7 +212,7 @@ local function buildPicker()
 
     -- Footer
     f.prev = W.Button(f, 60, 44, "<", function() f:SetPage(f.page - 1) end)
-    f.prev:SetPoint("BOTTOMLEFT", 20, 20)
+    f.prev:SetPoint("BOTTOMLEFT", 22, 22)
     f.next = W.Button(f, 60, 44, ">", function() f:SetPage(f.page + 1) end)
     f.next:SetPoint("LEFT", f.prev, "RIGHT", 8, 0)
     f.pageText = W.Font(f, 13, C.muted[1], C.muted[2], C.muted[3])
@@ -219,7 +221,7 @@ local function buildPicker()
     f.clear = W.Button(f, 150, 44, "Empty this button", function()
         if f.slot and ns.ClearSlot(f.slot) then f:Hide() end
     end)
-    f.clear:SetPoint("BOTTOMRIGHT", -20, 20)
+    f.clear:SetPoint("BOTTOMRIGHT", -22, 22)
     f.ranks = W.Button(f, 120, 44, "", function()
         ns.db.pickerAllRanks = not ns.db.pickerAllRanks
         f:SelectTab(f.tab)

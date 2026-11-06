@@ -51,31 +51,57 @@
   .dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.35); }
   .dots i.on { background: var(--accent); }
 
-  /* panels, mirror Widgets.lua Panel */
-  .panel { position: absolute; background: var(--panel); border: 1px solid var(--line); box-sizing: border-box;
-    transform-origin: center center; }
-  .panel::before { content: ""; position: absolute; top: -1px; left: -1px; right: -1px; height: 3px; background: var(--accent); }
-  .panel h1 { position: absolute; left: 22px; top: 18px; margin: 0; font-size: 20px; font-weight: 600; }
-  .panel .sub { position: absolute; left: 22px; top: 46px; font-size: 13px; color: var(--muted); }
+  /* panels, mirror Widgets.lua (RoundRect, Shadow, Card, Segmented, Toggle, Stepper) */
+  .panel { position: absolute; background: rgba(15,18,25,0.97); border-radius: 18px; box-sizing: border-box;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.10), 0 10px 40px rgba(0,0,0,0.6); transform-origin: center center; }
+  .panel .accentpill { position: absolute; left: 24px; top: 16px; width: 30px; height: 4px; border-radius: 2px; background: var(--accent); }
+  .panel h1 { position: absolute; left: 24px; top: 28px; margin: 0; font-size: 21px; font-weight: 600; line-height: 1; }
+  .panel .sub { position: absolute; left: 24px; top: 56px; font-size: 13px; color: var(--muted); }
+  .panel .ver { font-size: 12px; color: var(--muted); font-weight: 400; margin-left: 10px; }
   .btn { position: absolute; background: var(--panel-light); display: flex; align-items: center; justify-content: center;
-    font-size: 15px; color: var(--text); }
-  .btn.primary, .btn.sel { background: var(--accent); }
-  .tile { position: absolute; width: 104px; height: 104px; background: var(--panel-light); }
-  .tile .ti { position: absolute; left: 27px; top: 14px; width: 50px; height: 50px; border-radius: 6px; overflow: hidden; }
-  .tile .tl { position: absolute; left: 0; right: 0; bottom: 12px; text-align: center; font-size: 13px; }
-  .tile.press { background: #343846; }
-  .dim { position: absolute; inset: 0; background: rgba(0,0,0,0.45); }
-  .cell { position: absolute; width: 88px; height: 84px; }
-  .cell .ci { position: absolute; left: 19px; top: 4px; width: 50px; height: 50px; border-radius: 4px; overflow: hidden; }
-  .cell .cn { position: absolute; left: -2px; right: -2px; top: 58px; text-align: center; font-size: 11px; line-height: 1.2; }
-  .toggle { position: absolute; width: 58px; height: 32px; border-radius: 16px; background: #40424f; }
-  .toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 50%; background: #fff; }
+    font-size: 15px; color: var(--text); border-radius: 11px; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08); }
+  .btn.primary, .btn.sel { background: var(--accent); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14); }
+  .close { position: absolute; right: 14px; top: 14px; width: 40px; height: 40px; border-radius: 50%; background: var(--panel-light);
+    display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 16px; }
+  .seg { position: absolute; background: var(--panel-light); border-radius: 12px; display: flex; padding: 3px; box-sizing: border-box; }
+  .seg div { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 14px; border-radius: 10px; }
+  .seg div.on { background: var(--accent); color: #fff; }
+  .card { position: absolute; background: rgba(255,255,255,0.045); border-radius: 14px; }
+  .card .ct { position: absolute; left: 16px; top: 14px; font-size: 12px; color: var(--accent-soft); letter-spacing: 0.06em; text-transform: uppercase; }
+  .row { position: absolute; left: 16px; right: 16px; height: 56px; }
+  .row .rl { position: absolute; left: 0; top: 9px; font-size: 15px; }
+  .row .rs { position: absolute; left: 0; top: 30px; right: 76px; font-size: 12px; color: var(--muted); }
+  .row .toggle { right: 0; top: 12px; }
+  .toggle { position: absolute; width: 56px; height: 32px; border-radius: 16px; background: #40424f; }
+  .toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 50%; background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.5); }
   .toggle.on { background: var(--accent); }
-  .toggle.on::after { left: 29px; }
-  .outline { position: absolute; border: 2px solid rgba(219,39,119,0.7); background: rgba(219,39,119,0.06); box-sizing: border-box; }
+  .toggle.on::after { left: 27px; }
+  .stepper { position: absolute; height: 44px; }
+  .stepper .sl { position: absolute; left: 0; top: 13px; font-size: 15px; }
+  .stepper .sp { position: absolute; right: 0; top: 2px; width: 156px; height: 40px; border-radius: 20px; background: var(--panel-light);
+    display: flex; align-items: center; justify-content: space-between; padding: 0 2px; box-sizing: border-box; }
+  .stepper .sp i { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center;
+    justify-content: center; font-style: normal; font-size: 20px; }
+  .stepper .sp b { color: var(--gold); font-weight: 400; font-size: 15px; }
+  .hint { position: absolute; font-size: 12px; color: var(--muted); line-height: 1.35; }
+  .tile { position: absolute; width: 104px; height: 104px; background: var(--panel-light); border-radius: 16px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.07); }
+  .tile .ti { position: absolute; left: 26px; top: 14px; width: 52px; height: 52px; border-radius: 13px; overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.55); }
+  .tile .tl { position: absolute; left: 0; right: 0; bottom: 11px; text-align: center; font-size: 13px; }
+  .tile.press { background: #343846; }
+  .dim { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
+  .cell { position: absolute; width: 88px; height: 90px; border-radius: 12px; background: rgba(255,255,255,0.04); }
+  .cell .ci { position: absolute; left: 19px; top: 8px; width: 50px; height: 50px; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+  .cell .cn { position: absolute; left: -2px; right: -2px; top: 62px; text-align: center; font-size: 11px; line-height: 1.2; }
+  .outline { position: absolute; border: 2px solid rgba(219,39,119,0.7); background: rgba(219,39,119,0.06); box-sizing: border-box; border-radius: 6px; }
   .outline.sel { background: rgba(219,39,119,0.13); }
   .handle-label { position: absolute; font-size: 12px; text-align: center; width: 160px; text-shadow: 0 1px 2px #000; }
-
+  .toast { position: absolute; top: 84px; left: 50%; transform: translateX(-50%); height: 46px; border-radius: 23px; background: rgba(20,23,33,0.96);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.5); display: flex; align-items: center; padding: 0 24px 0 40px; font-size: 15px; white-space: nowrap; }
+  .toast::before { content: ""; position: absolute; left: 20px; top: 18px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
   .stick { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.10); border: 2px solid rgba(255,255,255,0.35); }
   .stick .nub { position: absolute; width: 40%; height: 40%; left: 30%; top: 30%; border-radius: 50%;
     background: rgba(255,255,255,0.45); box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
@@ -264,25 +290,31 @@ function hud(L, st = {}) {
   return html;
 }
 
+function stickItem(L) { return L.items.find(i => i.kind === "stick"); }
+
 function stick(L, opts = {}) {
-  // DroidDeck on-screen stick + A, placed on the addon's stick guide.
-  const W = L.width, H = L.height, left = L.handed !== "left";
-  const cx = (left ? 0.13 : 0.87) * W, cy = H - H * 0.27, r = 92;
+  // DroidDeck's own stick + A button, drawn over the addon's stick area.
+  const H = L.height, it = stickItem(L);
+  const cx = it.x + it.w / 2, cy = H - it.y - it.h / 2, r = it.w * 0.4;
+  const left = L.handed !== "left";
   const nx = (opts.nx || 0) * r * 0.5, ny = (opts.ny || 0) * r * 0.5;
-  const ax = cx + (left ? 1 : -1) * 150, ay = cy - 105;
+  const ax = cx + (left ? 1 : -1) * (r + 62), ay = cy - r - 14;
   return `<div class="stick" style="left:${cx - r}px;top:${cy - r}px;width:${2 * r}px;height:${2 * r}px">
       <div class="nub" style="transform:translate(${nx}px,${ny}px)"></div></div>
     <div class="padbtn" style="left:${ax - 30}px;top:${ay - 30}px;width:60px;height:60px;font-size:22px">A</div>
     <div class="tag" style="left:${cx - 90}px;top:${cy + r + 8}px;width:180px;text-align:center">DroidDeck on-screen stick</div>`;
 }
 
-function stickGuide(L) {
-  const W = L.width, H = L.height, left = L.handed !== "left";
-  const cx = (left ? 0.13 : 0.87) * W, cy = H - H * 0.27;
-  return `<div class="abs" style="left:${cx - 115}px;top:${cy - 115}px;width:230px;height:230px;border-radius:50%;
-      background:rgba(219,39,119,0.10);box-shadow:inset 0 0 0 16px rgba(219,39,119,0.85)"></div>
-    <div class="abs" style="left:${cx - 40}px;top:${cy - 40}px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.25)"></div>
-    <div class="abs" style="left:${cx - 130}px;top:${cy - 145}px;width:260px;text-align:center;font-size:14px;text-shadow:0 1px 2px #000">Put DroidDeck's left stick here</div>`;
+function stickGuide(L, opts = {}) {
+  const H = L.height, it = stickItem(L);
+  const cx = it.x + it.w / 2, cy = H - it.y - it.h / 2, d = it.w, pad = d * 0.15;
+  let html = "";
+  if (opts.block) html += `<div class="abs" style="left:${it.x - pad}px;top:${H - it.y - it.h - pad}px;width:${d + 2 * pad}px;height:${d + 2 * pad}px;background:rgba(255,255,255,0.05);border-radius:8px"></div>`;
+  html += `<div class="abs" style="left:${cx - d / 2}px;top:${cy - d / 2}px;width:${d}px;height:${d}px;border-radius:50%;
+      background:rgba(219,39,119,0.10);box-shadow:inset 0 0 0 ${d * 0.07}px rgba(219,39,119,0.85)"></div>
+    <div class="abs" style="left:${cx - d * 0.175}px;top:${cy - d * 0.175}px;width:${d * 0.35}px;height:${d * 0.35}px;border-radius:50%;background:rgba(255,255,255,0.25)"></div>
+    <div class="abs" style="left:${cx - 140}px;top:${cy + d / 2 + 8}px;width:280px;text-align:center;font-size:14px;text-shadow:0 1px 2px #000">Put DroidDeck's left stick here</div>`;
+  return html;
 }
 
 function fit(w, h, W, H, max) { return Math.min(max, (W * 0.94) / w, (H * 0.92) / h); }
@@ -292,104 +324,134 @@ function panelBox(W, H, w, h, max, extraStyle = "") {
   return { s, style: `left:${(W - w) / 2}px;top:${(H - h) / 2}px;width:${w}px;height:${h}px;transform:scale(${s});${extraStyle}` };
 }
 
+const head = (title, extra = "") => `<div class="accentpill"></div><h1>${title}${extra}</h1>`;
+const seg = (x, y, w, h, labels, on) => `<div class="seg" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px">${labels.map((l, i) => `<div class="${i === on ? "on" : ""}">${l}</div>`).join("")}</div>`;
+const card = (x, y, w, h, title, inner) => `<div class="card" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px">${title ? `<div class="ct">${title}</div>` : ""}${inner || ""}</div>`;
+const row = (y, label, sub, on) => `<div class="row" style="top:${y}px"><div class="rl">${label}</div>${sub ? `<div class="rs">${sub}</div>` : ""}<div class="toggle${on ? " on" : ""}"></div></div>`;
+const stepper = (x, y, w, label, val) => `<div class="stepper" style="left:${x}px;top:${y}px;width:${w}px"><div class="sl">${label}</div><div class="sp"><i>&minus;</i><b>${val}</b><i>+</i></div></div>`;
+
 // ------------------------------------------------------------- panels ----
 const TILES = [["Character", "character"], ["Bags", "bags"], ["Spellbook", "book"], ["Talents", "talents"],
   ["Quests", "quest"], ["Map", "map"], ["Social", "social"], ["Chat", "chat"],
   ["Close windows", "close"], ["Edit layout", "wrench"], ["Touch settings", "gear"], ["Game menu", "menu"]];
 
 function menuPanel(W, H, o = {}) {
-  const w = 4 * 104 + 3 * 12 + 48, h = 3 * 104 + 2 * 12 + 96;
+  const w = 4 * 104 + 3 * 12 + 48, h = 3 * 104 + 2 * 12 + 100;
   const b = panelBox(W, H, w, h, 1.2, `opacity:${o.alpha ?? 1}`);
   let tiles = "";
   TILES.forEach(([label, icon], i) => {
     const col = i % 4, row = Math.floor(i / 4);
-    tiles += `<div class="tile${o.press === i ? " press" : ""}" style="left:${24 + col * 116}px;top:${72 + row * 116}px">
+    tiles += `<div class="tile${o.press === i ? " press" : ""}" style="left:${24 + col * 116}px;top:${76 + row * 116}px">
       <div class="ti">${iconSVG(icon)}</div><div class="tl">${label}</div></div>`;
   });
-  return `<div class="dim" style="opacity:${o.alpha ?? 1}"></div><div class="panel" style="${b.style}"><h1>Menu</h1>
-    <div class="btn" style="right:10px;top:10px;width:44px;height:44px">X</div>${tiles}</div>`;
+  return `<div class="dim" style="opacity:${o.alpha ?? 1}"></div><div class="panel" style="${b.style}">${head("Menu")}
+    <div class="close">X</div>${tiles}</div>`;
 }
 
 function pickerPanel(W, H) {
-  const w = 6 * 96 + 48, h = 3 * 92 + 214;
+  const w = 6 * 96 + 48, h = 3 * 98 + 236;
   const b = panelBox(W, H, w, h, 1.2);
   const tabs = ["General", "Arms", "Fury", "Protection", "Items", "Macros"];
   const bw = Math.min(150, (w - 40 - 6 * 5) / 6);
-  let html = `<div class="panel" style="${b.style}"><h1>Choose an action for button 3</h1>
-    <div class="sub">Tap a spell, item or macro. It goes on action slot 3.</div>
-    <div class="btn" style="right:10px;top:10px;width:44px;height:44px">X</div>`;
-  tabs.forEach((t, i) => { html += `<div class="btn${i === 1 ? " sel" : ""}" style="left:${20 + i * (bw + 6)}px;top:74px;width:${bw}px;height:40px;font-size:14px">${t}</div>`; });
+  let html = `<div class="panel" style="${b.style}">${head("Choose an action for button 3")}
+    <div class="sub">Tap a spell, item or macro. It goes on action slot 3.</div><div class="close">X</div>`;
+  tabs.forEach((t, i) => { html += `<div class="btn${i === 1 ? " sel" : ""}" style="left:${20 + i * (bw + 6)}px;top:86px;width:${bw}px;height:40px;font-size:14px">${t}</div>`; });
   const spells = [["Heroic Strike", "strike"], ["Rend", "rend"], ["Charge", "charge"], ["Thunder Clap", "thunder"],
     ["Hamstring", "hamstring"], ["Battle Shout", "shout"], ["Overpower", "sword"], ["Mocking Blow", "assist"],
     ["Retaliation", "shield"], ["Mortal Strike", "fire"]];
   spells.forEach(([n, ic], i) => {
-    const col = i % 6, row = Math.floor(i / 6);
-    html += `<div class="cell" style="left:${24 + col * 96}px;top:${124 + row * 92}px${i === 1 ? ";background:rgba(219,39,119,0.35)" : ""}">
+    const col = i % 6, r = Math.floor(i / 6);
+    html += `<div class="cell" style="left:${24 + col * 96}px;top:${140 + r * 98}px${i === 1 ? ";background:rgba(219,39,119,0.45)" : ""}">
       <div class="ci">${iconSVG(ic)}</div><div class="cn">${n}</div></div>`;
   });
-  html += `<div class="btn" style="left:20px;bottom:20px;width:60px;height:44px">&lt;</div>
-    <div class="btn" style="left:88px;bottom:20px;width:60px;height:44px">&gt;</div>
-    <div class="abs" style="left:160px;bottom:34px;font-size:13px;color:var(--muted)">Page 1 / 1</div>
-    <div class="btn" style="right:178px;bottom:20px;width:120px;height:44px">Best rank</div>
-    <div class="btn" style="right:20px;bottom:20px;width:150px;height:44px">Empty this button</div></div>`;
-  return `<div class="dim" style="opacity:0.35"></div>` + html;
+  html += `<div class="btn" style="left:22px;bottom:22px;width:60px;height:44px">&lt;</div>
+    <div class="btn" style="left:90px;bottom:22px;width:60px;height:44px">&gt;</div>
+    <div class="abs" style="left:162px;bottom:36px;font-size:13px;color:var(--muted)">Page 1 / 1</div>
+    <div class="btn" style="right:180px;bottom:22px;width:120px;height:44px">Best rank</div>
+    <div class="btn" style="right:22px;bottom:22px;width:150px;height:44px">Empty this button</div></div>`;
+  return `<div class="dim" style="opacity:0.4"></div>` + html;
 }
 
 function editOverlay(L) {
   const H = L.height, W = L.width;
-  let html = stickGuide(L);
+  let html = stickGuide(L, { block: true });
   for (const it of L.items.filter(i => i.kind === "group")) {
     const top = H - it.y - it.h, sel = it.name === "cluster";
     html += `<div class="outline${sel ? " sel" : ""}" style="left:${it.x}px;top:${top}px;width:${it.w}px;height:${it.h}px"></div>`;
   }
-  // handle positions exported from the addon's edit mode
   for (const it of L.items.filter(i => i.kind === "handle")) {
     const sel = it.name === "cluster";
     const hx = it.x + it.w / 2, hy = H - it.y - it.h / 2;
-    html += roundButton(it, H, { plateColor: "#db2777", glyph: "&#10021;", glyphSize: 22, alpha: sel ? 1 : 0.8 });
+    html += roundButton(it, H, { plateColor: "#db2777", glyph: "&#10021;", glyphSize: 22, alpha: sel ? 1 : 0.85 });
     html += `<div class="handle-label" style="left:${hx - 80}px;top:${hy - it.h / 2 - 20}px">${it.label}</div>`;
   }
-  // toolbar
-  const w = 820, h = 176, s = Math.min(1, (W * 0.94) / w, (H * 0.92) / h);
+  const w = 840, h = 196, s = Math.min(1, (W * 0.94) / w, (H * 0.92) / h);
   html += `<div class="panel" style="left:${(W - w) / 2}px;top:${12 - (h - h * s) / 2}px;width:${w}px;height:${h}px;transform:scale(${s})">
-    <h1>Edit layout</h1><div class="sub">Drag a pink handle to move. Tap any spell button to change it, or drag one button onto another to swap.</div>`;
-  ["Spell wheel", "Target buttons", "Menu button", "Camera zoom"].forEach((g, i) => {
-    html += `<div class="btn${i === 0 ? " sel" : ""}" style="left:${22 + i * 195.5}px;top:72px;width:189.5px;height:40px">${g}</div>`;
-  });
-  const stepper = (x, label, val) => `<div class="abs" style="left:${x}px;top:134px;font-size:15px">${label}</div>
-    <div class="btn" style="left:${x + 96}px;top:124px;width:44px;height:40px">&minus;</div>
-    <div class="abs" style="left:${x + 140}px;top:134px;width:66px;text-align:center;color:var(--gold);font-size:15px">${val}</div>
-    <div class="btn" style="left:${x + 206}px;top:124px;width:44px;height:40px">+</div>`;
-  html += stepper(22, "Size", "95%") + stepper(302, "Opacity", "100%");
-  html += `<div class="btn" style="right:138px;bottom:10px;width:120px;height:44px">Reset layout</div>
-    <div class="btn primary" style="right:20px;bottom:10px;width:110px;height:44px">Done</div></div>`;
+    ${head("Edit layout")}<div class="sub">Drag a pink handle to move a group. Tap a spell button to change it, or drag one onto another to swap.</div>
+    ${seg(24, 82, 792, 42, ["Spell wheel", "Target buttons", "Menu button", "Camera zoom", "Stick area"], 0)}
+    ${stepper(24, 136, 250, "Size", "95%")}${stepper(298, 136, 250, "Opacity", "100%")}
+    <div class="btn" style="right:142px;bottom:16px;width:120px;height:44px">Reset layout</div>
+    <div class="btn primary" style="right:24px;bottom:16px;width:110px;height:44px">Done</div></div>`;
   return html;
 }
 
-function setupPanel(W, H, L) {
-  const w = 700, h = 520;
+function setupPanel(W, H) {
+  const w = 700, h = 610;
   const b = panelBox(W, H, w, h, 1.2);
   const line = (y, t, muted) => `<div class="abs" style="left:26px;right:26px;top:${y}px;font-size:14px;line-height:1.35;${muted ? "color:var(--muted)" : ""}">${t}</div>`;
-  return `<div class="panel" style="${b.style}"><h1>Welcome to Forever Touch</h1>
-    <div class="sub" style="color:var(--accent-soft)">Step 2 of 3 - Running and jumping</div>
-    <div class="btn" style="right:10px;top:10px;width:44px;height:44px">X</div>
-    ${line(86, "Blizzard doesn't let addons move your character, so movement uses WoW's built-in controller support with DroidDeck's on-screen stick. You get smooth analog running, and A jumps.")}
-    <div class="btn primary" style="left:26px;top:146px;width:260px;height:48px">Controller movement on</div>
-    <div class="abs" style="left:300px;top:162px;font-size:14px;color:#4ddb80">Controller movement is on</div>
-    <div class="btn" style="right:26px;top:146px;width:150px;height:48px">Test the stick</div>
-    ${line(214, "1.&nbsp; In DroidDeck, swipe in from the right edge and turn on the on-screen controls.")}
-    ${line(244, "2.&nbsp; Keep the left stick and the A button. Drag the stick onto the pink circle.")}
-    ${line(274, "3.&nbsp; Drag on empty ground with one finger to turn the camera. Pinch or use the + / - buttons to zoom.")}
-    ${line(322, "If the stick moves the mouse instead of your character, set this game's Steam Input layout to Gamepad.", true)}
-    <div class="abs" style="left:26px;top:364px;font-size:15px">Also allow tap-to-move</div>
-    <div class="abs" style="left:26px;top:386px;font-size:12px;color:var(--muted)">Tap the ground to walk there (needs DroidDeck's long-press = right click).</div>
-    <div class="toggle" style="right:26px;top:366px"></div>
+  return `<div class="panel" style="${b.style}">${head("Welcome to Forever Touch")}
+    <div class="sub" style="color:var(--accent-soft)">Step 2 of 3 - Running and jumping</div><div class="close">X</div>
+    ${line(94, "Blizzard doesn't let addons move your character, so movement uses WoW's built-in controller support with DroidDeck's on-screen stick. You get smooth analog running, and A jumps.")}
+    <div class="btn primary" style="left:26px;top:154px;width:260px;height:48px">Controller movement on</div>
+    <div class="abs" style="left:300px;top:170px;font-size:14px;color:#4ddb80">Controller movement is on</div>
+    <div class="btn" style="right:26px;top:154px;width:150px;height:48px">Test the stick</div>
+    ${line(222, "1.&nbsp; In DroidDeck, swipe in from the right edge and turn on the on-screen controls.")}
+    ${line(252, "2.&nbsp; Keep the left stick and the A button. Drag the stick onto the pink circle.")}
+    ${line(282, "3.&nbsp; Drag on empty ground with one finger to turn the camera. Pinch or use the + / - buttons to zoom.")}
+    ${line(330, "If the stick moves the mouse instead of your character, set this game's Steam Input layout to Gamepad.", true)}
+    <div class="abs" style="left:26px;top:374px;font-size:15px">Also allow tap-to-move</div>
+    <div class="abs" style="left:26px;top:396px;font-size:12px;color:var(--muted)">Tap the ground to walk there (needs DroidDeck's long-press = right click).</div>
+    <div class="toggle" style="right:26px;top:376px"></div>
     <div class="btn" style="left:26px;bottom:20px;width:120px;height:48px">Back</div>
     <div class="btn primary" style="right:26px;bottom:20px;width:160px;height:48px">Next</div>
-    <div class="abs" style="left:0;right:0;bottom:34px;display:flex;justify-content:center;gap:8px">
+    <div class="abs" style="left:0;right:0;bottom:38px;display:flex;justify-content:center;gap:8px">
       <i style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.3)"></i>
       <i style="width:10px;height:10px;border-radius:50%;background:var(--accent)"></i>
       <i style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.3)"></i></div></div>`;
+}
+
+function settingsPanel(W, H, tab) {
+  const w = 820, h = 610, b = panelBox(W, H, w, h, 1.2);
+  const tabs = ["Layout", "Controls", "Movement", "Help"];
+  const L = 24, R = 24 + 376 + 20, top = 128, cw = 376, inner = 344;
+  let body = "";
+  if (tab === "Layout") {
+    body = card(L, top, cw, 122, "Screen", seg(16, 40, inner, 42, ["Auto", "Folded", "Unfolded"], 0) +
+        `<div class="hint" style="left:16px;top:92px">Using the folded (cover screen) layout right now.</div>`) +
+      card(L, top + 142, cw, 106, "Spell thumb", seg(16, 40, inner, 42, ["Right thumb", "Left thumb"], 0)) +
+      card(L, top + 268, cw, 106, "Arrange", `<div class="btn primary" style="left:16px;top:40px;width:168px;height:44px">Edit layout</div>
+        <div class="btn" style="left:192px;top:40px;width:168px;height:44px">Reset layout</div>`) +
+      card(R, top, cw, 370, "Spell wheel pages", stepper(16, 40, inner, "Pages", "2") +
+        `<div class="hint" style="left:16px;right:16px;top:88px">Tap the small number beside the big button to flip pages - works in combat.</div>
+        <div class="abs" style="left:16px;top:128px;font-size:14px">Page 1 &nbsp;<span style="color:var(--muted)">Main bar - follows stance and forms</span></div>
+        <div class="abs" style="left:16px;top:172px;font-size:14px">Page 2</div><div class="btn" style="left:96px;top:160px;width:264px;height:42px">Bottom left bar &nbsp;&gt;</div>`);
+  } else if (tab === "Movement") {
+    body = card(L, top, cw, 370, "Stick area",
+        `<div class="hint" style="left:16px;right:16px;top:40px;font-size:13px">DroidDeck draws the stick. Size this area to match it - the pink circle on screen shows it while this tab is open.</div>` +
+        stepper(16, 96, inner, "Size", "120%") +
+        `<div class="abs" style="left:16px;top:160px;font-size:15px">Touches here don't turn the camera</div>` +
+        seg(16, 186, inner, 42, ["Off", "Near stick", "Stick side"], 1) +
+        `<div class="hint" style="left:16px;right:16px;top:236px">A thumb sliding off the stick won't spin the camera. Game windows and buttons there still work.</div>
+        <div class="btn" style="left:16px;top:278px;width:${inner}px;height:44px">Move it in Edit layout</div>`) +
+      card(R, top, cw, 370, "Running and jumping",
+        row(34, "Controller movement", "DroidDeck's stick runs, A jumps.", true) + row(94, "Tap-to-move", "Long-press the ground to walk there.", false) +
+        `<div class="btn primary" style="left:16px;top:166px;width:${inner}px;height:44px">Test the stick</div>
+        <div class="hint" style="left:16px;right:16px;top:218px">Shows whether WoW sees DroidDeck's stick and what to change if it doesn't.</div>`);
+  }
+  return `<div class="dim" style="opacity:0.25"></div><div class="panel" style="${b.style}">${head("Forever Touch", '<span class="ver">v1.1.0</span>')}
+    <div class="close">X</div>${seg(24, 68, w - 48, 44, tabs, tabs.indexOf(tab))}${body}
+    <div class="hint" style="left:26px;bottom:38px">Changes apply to the folded (cover screen) layout.</div>
+    <div class="btn primary" style="right:24px;bottom:22px;width:140px;height:48px">Done</div></div>`;
 }
 
 // ------------------------------------------------------------- scenes ----
@@ -419,7 +481,9 @@ function render() {
     case "menu": html = base(L, {}, stick(L)) + menuPanel(L.width, L.height); break;
     case "picker": html = base(L, { buttons: { 3: { empty: true, icon: "", glyph: "+", alpha: 0.75 } } }, "") + pickerPanel(L.width, L.height); break;
     case "edit": L = window.LAYOUT.coverEdit; html = base(L, { edit: true }, "") + editOverlay(L); break;
-    case "setup": html = base(L, {}, stickGuide(L)) + setupPanel(L.width, L.height, L); break;
+    case "setup": html = base(L, {}, stickGuide(L)) + setupPanel(L.width, L.height); break;
+    case "settings": html = base(L, {}, "") + settingsPanel(L.width, L.height, "Layout"); break;
+    case "settings-movement": html = base(L, {}, stickGuide(L, { block: true })) + settingsPanel(L.width, L.height, "Movement"); break;
     case "demo": html = demo(L); break;
   }
   el.innerHTML = html;

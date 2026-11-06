@@ -272,7 +272,8 @@ step("fold/unfold switches layout", function()
     M.FireEvent("DISPLAY_SIZE_CHANGED")
     M.RunTimers(1)
     check(ns.ActiveProfile() == "main", "unfolded -> main profile")
-    check(logHas("Unfolded"), "player told about the switch")
+    check(_G.ForeverTouchToast and _G.ForeverTouchToast:IsShown()
+        and _G.ForeverTouchToast.text:GetText():find("unfolded"), "player told about the switch (toast)")
     check(ns.groups.cluster:GetScale() == ns.db.layouts.main.cluster.scale, "main profile scale applied")
 end)
 
@@ -373,6 +374,48 @@ step("controller test", function()
     f.enable:Click()
     check(M.cvars.GamePadEnable == "1", "'Turn it on' enables controller support")
     f:Hide()
+end)
+
+step("stick area blocks camera touches", function()
+    local area, side = _G.ForeverTouchStickArea, _G.ForeverTouchStickSide
+    check(area ~= nil and ns.groups.stick == area, "stick area is a layout group")
+    check(ns.db.cameraBlock == "around", "default: block around the stick")
+    check(area._mouse == true and not side:IsShown(), "around: stick area swallows touches")
+    M.combat = true -- switching must also work mid-fight
+    ns.SetCameraBlock("side")
+    M.combat = false
+    check(side:IsShown() and side._mouse == true and not area._mouse, "side: whole stick side blocks")
+    local br
+    for _, p in ipairs(side._points) do if p[1] == "BOTTOMRIGHT" then br = p end end
+    check(br and br[3] == "BOTTOM", "right-handed: blocks the left half")
+    ns.SetHanded("left")
+    local br2
+    for _, p in ipairs(side._points) do if p[1] == "BOTTOMRIGHT" then br2 = p end end
+    check(br2 and br2[3] == "BOTTOMRIGHT", "left-handed: blocks the right half")
+    ns.SetHanded("right")
+    ns.SetCameraBlock("off")
+    check(not area._mouse and not side:IsShown(), "off: nothing blocked")
+    ns.SetCameraBlock("around")
+end)
+
+step("settings: stick size and test buttons", function()
+    ns.ShowSettings()
+    local f = _G.ForeverTouchSettings
+    local before = ns.Layout("stick").scale
+    for _, c in ipairs(f.stickSize._children) do
+        if c.text and c.text._text == "+" then c:Click() end
+    end
+    check(math.abs(ns.Layout("stick").scale - (before + 0.1)) < 1e-6, "Stick area size + grows the stick area")
+    check(_G.ForeverTouchStickArea:GetScale() == ns.Layout("stick").scale, "stick area resized on screen")
+    f.touchTestButton:Click()
+    check(_G.ForeverTouchTouchTest:IsShown() and not f:IsShown(), "Test touch button opens the touch test")
+    _G.ForeverTouchTouchTest:Hide()
+    ns.ShowSettings()
+    f.padTestButton:Click()
+    check(_G.ForeverTouchPadTest:IsShown(), "Test the stick button opens the controller test")
+    _G.ForeverTouchPadTest:Hide()
+    ns.Layout("stick").scale = before
+    ns.ApplyLayout()
 end)
 
 step("slash", function()

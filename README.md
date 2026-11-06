@@ -45,9 +45,11 @@
 | **Target row** | Target nearest enemy, Assist, Clear target, plus Pet attack for hunters and warlocks. |
 | **Camera** | Drag on empty ground to turn the camera. The + / − buttons zoom, and holding one keeps zooming. |
 | **Edit layout** | Drag the pink handles to move groups and resize them from 50 to 170%. Set opacity, tap a button to reassign it, or drag one button onto another to swap. |
+| **Stick area** | A resizable, movable zone for DroidDeck's stick. Touches that slide off the stick don't spin the camera. Choose *Off*, *Near stick* or the whole *Stick side*. |
 | **Fold aware** | The folded (cover) and unfolded (inner) screens each keep their own layout and switch automatically when you open or close the phone. |
 | **Left-handed mode** | Mirrors the whole layout. |
-| **Guided setup** | A 3-step guide on first login covers your thumbs, movement and comfort settings. |
+| **Guided setup** | A 3-step guide on first login covers your thumbs (with a live diagram), movement and comfort settings. |
+| **Settings in tabs** | Layout, Controls, Movement and Help. Every option and both troubleshooting tests are buttons, so you never need to type a command. |
 | **Combat safe** | Built on Blizzard's secure templates. Anything that can't change in combat waits until the fight ends instead of erroring. |
 
 ## Screenshots
@@ -81,6 +83,15 @@ Tap an empty button and pick from your spellbook, usable items or macros.
 Pink handles move groups, the toolbar resizes them, and the pink circle shows where DroidDeck's stick fits.
 
 ![Edit layout mode](docs/images/edit-layout.png)
+
+### Settings
+Four tabs, sized for the cover screen. **Layout** covers screen, thumb and spell pages. **Controls** covers what's on screen and game settings. **Movement** covers the stick area and running. **Help** has the touch and stick tests.
+
+![Settings, Layout tab](docs/images/settings.png)
+
+The **Movement** tab sizes the stick area to match DroidDeck's stick and sets whether touches near it can turn the camera.
+
+![Settings, Movement tab](docs/images/settings-movement.png)
 
 ### Guided setup
 Step 2 switches on controller movement and walks you through the DroidDeck side.
@@ -147,15 +158,16 @@ DroidDeck is evolving quickly, so menu names may differ slightly in your version
 
 ## Settings and commands
 
-Open the settings from the menu tile **Touch settings**, with `/ft`, or under **Options → AddOns → Forever Touch**.
+Open the settings from the menu tile **Touch settings**, with `/ft`, or under **Options → AddOns → Forever Touch**. Everything below is a button or switch, so the slash commands are only there if you prefer typing.
 
-- **Screen layout:** Auto, Folded or Unfolded.
-- **Spell thumb:** Right or Left.
-- **Spell wheel pages:** 1 to 3. Page 1 is always the main bar. Pages 2 and 3 can be the bottom left, bottom right, right, right 2 or action bar 2.
-- **Controls:** show or hide the target buttons, the camera buttons and empty slots. *Dim out of combat* and *Hide default action bars* are here too. Hiding the bars keeps the XP and pet bars, and showing them again needs `/reload`.
-- **Controller movement** and **Tap to interact**, when your client supports them.
+| Tab | What's there |
+|---|---|
+| **Layout** | Screen (Auto, Folded or Unfolded) · spell thumb (right or left) · Edit layout and Reset layout · spell wheel pages (1–3). Page 1 is always the main bar, and pages 2 and 3 can be the bottom left, bottom right, right, right 2 or action bar 2. |
+| **Controls** | Target buttons · camera zoom buttons · empty buttons · dim out of combat · hide default action bars (XP and pet bars stay, and undoing needs `/reload`) · game settings: tap to interact, auto loot, cast on touch and cooldown numbers (each shown only if your client has it). |
+| **Movement** | Stick area size · *Touches here don't turn the camera*: Off, Near stick or Stick side · controller movement · tap-to-move · **Test the stick** |
+| **Help** | **Test touch** · **Test the stick** · touch input fixes · run the setup guide again · the slash commands |
 
-The setup guide also offers *Auto loot*, *Cast the moment you touch* and *Cooldown numbers*. Each one only appears if your client has the setting.
+Typing is optional. With DroidDeck's keyboard:
 
 | Command | What it does |
 |---|---|
@@ -179,14 +191,14 @@ The setup guide also offers *Auto loot*, *Cast the moment you touch* and *Cooldo
 ## Troubleshooting
 
 ### Touching shows the cursor but nothing gets pressed
-Taps are clicking wherever the cursor already was, not where your finger is. Type `/ft touchtest` (open DroidDeck's keyboard) to confirm: gold dots show where the game felt each tap.
+Taps are clicking wherever the cursor already was, not where your finger is. If you can reach any button, use **Menu → Touch settings → Help → Test touch**. Otherwise type `/ft touchtest` with DroidDeck's keyboard. Gold dots show where the game felt each tap.
 
 1. **DroidDeck → Touch mode → Direct** (not Touchpad).
 2. **Update DroidDeck.** Preview builds from before Nov 5 2026 send every touch through the touchpad while a game holds the pointer, even in Direct mode. This was fixed in [DroidDeck #2133](https://github.com/Droid-Deck/DroidDeck/pull/2133). Stable 0.6.9 doesn't have this problem.
 3. Forever Touch 1.0.1+ also changes three game settings once at login: raw mouse input off, cursor not locked to the window, and hardware cursor on. Together these make the cursor jump to your finger. Restart the game once afterwards. Undo with `/ft touchfix off`.
 
 ### The left stick doesn't move my character
-Addons can't move characters, so the stick has to reach WoW **as a controller**. Type `/ft padtest` (or use **Test the stick** in setup step 2). It shows whether WoW sees a controller and draws your stick live:
+Addons can't move characters, so the stick has to reach WoW **as a controller**. Tap **Menu → Touch settings → Movement → Test the stick** (also in setup step 2). It shows whether WoW sees a controller and draws your stick live:
 
 | Test result | What to do |
 |---|---|
@@ -207,6 +219,7 @@ Addons can't move characters, so the stick has to reach WoW **as a controller**.
 | A menu tile does nothing | Update to 1.0.2+. Tiles now check that their window actually opened and open it directly if not. If a tile still fails, the reason is printed in chat. |
 | A doesn't jump | Run `/ft setup`, go to step 2 and tap *Turn on controller movement* again. |
 | Taps cast twice or not at all | Toggle *Cast the moment you touch* in `/ft setup` step 3. |
+| The camera spins when my thumb slips off the stick | **Touch settings → Movement**: make the stick area bigger, or set *Touches here don't turn the camera* to **Stick side**. |
 | Buttons are off screen after unfolding | `/ft reset` resets that screen's layout. |
 | "Can't be changed during combat" | Wait for combat to end. This is Blizzard's rule. |
 
@@ -229,6 +242,7 @@ sh tools/preview/capture.sh         # regenerate docs/images/* (screenshots + de
 - the menu in combat: secure micro button clicks, closing after a tile, tapping outside
 - micro buttons that act on mouse-up (the Game menu): fallback, self-check and error reporting
 - edit mode: dragging, resizing, swapping buttons, and closing automatically on combat
+- the stick area: camera blocking modes (also mid-fight), left-hand mirroring, size setting
 - left-handed mirroring, fold/unfold switching, and layout changes deferred until after combat
 - setup: controller movement and the A = Jump binding
 - touch input fixes (apply/undo) and the touch test verdicts

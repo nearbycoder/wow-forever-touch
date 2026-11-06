@@ -90,6 +90,7 @@ local function snapshot()
     add("zoom", zoom[1], { text = "+" })
     add("zoom", zoom[2], { text = "-" })
     add("menu", _G.ForeverTouchMenuButton)
+    add("stick", _G.ForeverTouchStickArea, { mode = ns.db.cameraBlock })
     for name, f in pairs(ns.groups) do
         add("group", f, { name = name, label = ns.groupLabels[name] })
     end

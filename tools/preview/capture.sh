@@ -22,6 +22,8 @@ shot menu 1792 768 "$OUT/menu.png"
 shot picker 1792 768 "$OUT/spell-picker.png"
 shot edit 1792 768 "$OUT/edit-layout.png"
 shot setup 1792 768 "$OUT/setup-movement.png"
+shot settings 1792 768 "$OUT/settings.png"
+shot settings-movement 1792 768 "$OUT/settings-movement.png"
 
 # Animated demo: 12 fps for 6 seconds.
 FRAMES=$(mktemp -d)

@@ -74,11 +74,13 @@ local function buildTest()
     local bg = W.Color(f, "BACKGROUND", 0, 0, 0, 0.75)
     bg:SetAllPoints()
 
-    f.title = W.Font(f, 22)
-    f.title:SetPoint("TOP", 0, -36)
+    local head = W.Card(f, 940, 96)
+    head:SetPoint("TOP", 0, -24)
+    f.title = W.Font(head, 22)
+    f.title:SetPoint("TOP", 0, -16)
     f.title:SetText("Controller test")
-    f.status = W.Font(f, 14, C.muted[1], C.muted[2], C.muted[3])
-    f.status:SetPoint("TOP", f.title, "BOTTOM", 0, -10)
+    f.status = W.Font(head, 14, C.muted[1], C.muted[2], C.muted[3])
+    f.status:SetPoint("TOP", f.title, "BOTTOM", 0, -8)
     f.status:SetWidth(1000)
     f.status:SetJustifyH("CENTER")
 
@@ -100,8 +102,11 @@ local function buildTest()
     f.prompt = W.Font(f, 16)
     f.prompt:SetPoint("BOTTOM", pad, "TOP", 0, 16)
 
-    f.result = W.Font(f, 15)
-    f.result:SetPoint("BOTTOM", 0, 110)
+    f.resultCard = W.Card(f, 1140, 108)
+    f.resultCard:SetPoint("BOTTOM", 0, 100)
+    f.resultCard:Hide()
+    f.result = W.Font(f.resultCard, 15)
+    f.result:SetPoint("CENTER")
     f.result:SetWidth(1100)
     f.result:SetJustifyH("CENTER")
 
@@ -124,6 +129,7 @@ local function buildTest()
             #names > 0 and table.concat(names, ", ") or "|cffff6666none|r"))
         self.moved, self.elapsed, self.done = 0, 0, false
         self.result:SetText("")
+        self.resultCard:Hide()
         self.enable:SetShown(s.api and not s.cvar)
         if not s.api then
             self:Finish("noapi")
@@ -141,6 +147,7 @@ local function buildTest()
         self.done = true
         self.prompt:SetText("")
         self.result:SetText(TEXT[key])
+        self.resultCard:Show()
         ns.db.lastPadTest = key
         ns.Print("Controller test: %s", (TEXT[key]:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " ")))
     end

@@ -108,28 +108,29 @@ local function createTile(panel, i, def)
         tile:SetAttribute("clickbutton", micro)
     end
 
-    local bg = W.Color(tile, "BACKGROUND", C.panelLight[1], C.panelLight[2], C.panelLight[3], 1)
-    bg:SetAllPoints()
-    local hl = W.Color(tile, "HIGHLIGHT", 1, 1, 1, 0.07)
-    hl:SetAllPoints()
-    local press = W.Color(tile, "ARTWORK", 1, 1, 1, 0, 2)
-    press:SetAllPoints()
+    W.RoundRect(tile, "BACKGROUND", 16, 1, 1, 1, 0.07, 0)
+    W.RoundRect(tile, "BACKGROUND", 15, C.panelLight[1], C.panelLight[2], C.panelLight[3], 1, 1, 1)
+    local press = W.RoundRect(tile, "ARTWORK", 16, 1, 1, 1, 0, 2)
 
+    local iconShadow = W.Tex(tile, "BORDER", ns.media .. "soft", 0, 0, 0, 0.55)
+    iconShadow:SetSize(74, 74)
+    iconShadow:SetPoint("TOP", 0, -6)
     local icon = tile:CreateTexture(nil, "ARTWORK")
-    icon:SetSize(50, 50)
+    icon:SetSize(52, 52)
     icon:SetPoint("TOP", 0, -14)
     icon:SetTexture(def[2])
     icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    W.MaskIcon(icon, tile)
 
     local label = W.Font(tile, 13)
-    label:SetPoint("BOTTOM", 0, 12)
+    label:SetPoint("BOTTOM", 0, 11)
     label:SetPoint("LEFT", 4, 0)
     label:SetPoint("RIGHT", -4, 0)
     label:SetJustifyH("CENTER")
     label:SetText(def[1])
 
-    tile:HookScript("OnMouseDown", function() press:SetAlpha(0.12) end)
-    tile:HookScript("OnMouseUp", function() press:SetAlpha(0) end)
+    tile:HookScript("OnMouseDown", function() press:SetColor(1, 1, 1, 0.12) end)
+    tile:HookScript("OnMouseUp", function() press:SetColor(1, 1, 1, 0) end)
 
     if not micro then
         tile:HookScript("PostClick", function(_, _, down)
@@ -171,7 +172,7 @@ end
 local function createMenu()
     local rows = math.ceil(#TILES / COLS)
     local width = COLS * TILE + (COLS - 1) * GAP + 48
-    local height = rows * TILE + (rows - 1) * GAP + 96
+    local height = rows * TILE + (rows - 1) * GAP + 100
 
     local panel = W.Panel("ForeverTouchMenu", UIParent, width, height, "Menu", "SecureHandlerBaseTemplate")
     panel:SetPoint("CENTER")
@@ -185,25 +186,25 @@ local function createMenu()
     catcher:SetFrameLevel(5)
     catcher:RegisterForClicks("AnyUp")
     catcher:SetAttribute("_onclick", CLOSE_ONCLICK)
-    local dim = W.Color(catcher, "BACKGROUND", 0, 0, 0, 0.45)
+    local dim = W.Color(catcher, "BACKGROUND", 0, 0, 0, 0.5)
     dim:SetAllPoints()
 
     local close = CreateFrame("Button", "ForeverTouchMenuClose", panel, "SecureHandlerClickTemplate")
-    close:SetSize(44, 44)
-    close:SetPoint("TOPRIGHT", -10, -10)
+    close:SetSize(40, 40)
+    close:SetPoint("TOPRIGHT", -14, -14)
     close:RegisterForClicks("AnyUp")
     close:SetAttribute("_onclick", CLOSE_ONCLICK)
-    local cbg = W.Color(close, "BACKGROUND", C.panelLight[1], C.panelLight[2], C.panelLight[3], 1)
+    local cbg = W.Tex(close, "BACKGROUND", ns.media .. "circle", C.panelLight[1], C.panelLight[2], C.panelLight[3], 1)
     cbg:SetAllPoints()
-    local cx = W.Font(close, 16)
-    cx:SetPoint("CENTER")
+    local cx = W.Font(close, 16, C.muted[1], C.muted[2], C.muted[3])
+    cx:SetPoint("CENTER", 0, 1)
     cx:SetText("X")
 
     for i, def in ipairs(TILES) do
         local tile = createTile(panel, i, def)
         local col = (i - 1) % COLS
         local row = math.floor((i - 1) / COLS)
-        tile:SetPoint("TOPLEFT", 24 + col * (TILE + GAP), -72 - row * (TILE + GAP))
+        tile:SetPoint("TOPLEFT", 24 + col * (TILE + GAP), -76 - row * (TILE + GAP))
     end
 
     panel:HookScript("OnShow", function(self)

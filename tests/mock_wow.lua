@@ -90,6 +90,7 @@ local FontProto = noops({}, { "SetFont", "SetTextColor", "SetShadowColor", "SetS
 function FontProto:SetPoint(...) table.insert(self._points, { ... }) end
 function FontProto:SetText(t) self._text = t end
 function FontProto:GetText() return self._text end
+function FontProto:GetStringWidth() return #(self._text or "") * 7 end
 function FontProto:Show() self._shown = true end
 function FontProto:Hide() self._shown = false end
 function FontProto:SetShown(v) self._shown = not not v end
@@ -131,7 +132,14 @@ function Frame:SetWidth(w) guard(self, "SetWidth") self._w = w end
 function Frame:SetHeight(h) guard(self, "SetHeight") self._h = h end
 function Frame:GetWidth() return self._w or 0 end
 function Frame:GetHeight() return self._h or 0 end
-function Frame:SetPoint(...) guard(self, "SetPoint") self._points = { { ... } } end
+-- Like WoW: setting an anchor point replaces that point and keeps the others.
+function Frame:SetPoint(point, ...)
+    guard(self, "SetPoint")
+    for i, p in ipairs(self._points) do
+        if p[1] == point then self._points[i] = { point, ... } return end
+    end
+    table.insert(self._points, { point, ... })
+end
 function Frame:ClearAllPoints() guard(self, "ClearAllPoints") self._points = {} end
 function Frame:SetAllPoints(rel) guard(self, "SetAllPoints") self._points = { { "ALL", rel } } end
 function Frame:GetCenter()

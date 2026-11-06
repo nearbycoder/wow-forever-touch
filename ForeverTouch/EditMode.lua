@@ -8,48 +8,8 @@ local M = ns.media
 
 local handles = {}
 ns.editHandles = handles
-local toolbar, guide
+local toolbar
 local selected = "cluster"
-
--- Movement stick guide ----------------------------------------------------------
--- Addons can't move the character, so movement comes from DroidDeck's on-screen
--- stick. This ring shows where to place it so it won't overlap the spell wheel.
-function ns.ShowStickGuide(show)
-    if not guide then
-        guide = CreateFrame("Frame", "ForeverTouchStickGuide", UIParent)
-        guide:SetSize(230, 230)
-        guide:SetFrameStrata("BACKGROUND")
-        local ring = W.Tex(guide, "ARTWORK", M .. "ring", C.accent[1], C.accent[2], C.accent[3], 0.85)
-        ring:SetAllPoints()
-        local fill = W.Tex(guide, "BACKGROUND", M .. "circle", C.accent[1], C.accent[2], C.accent[3], 0.10)
-        fill:SetAllPoints()
-        local nub = W.Tex(guide, "ARTWORK", M .. "circle", 1, 1, 1, 0.25, 1)
-        nub:SetSize(80, 80)
-        nub:SetPoint("CENTER")
-        local text = W.Font(guide, 14)
-        text:SetPoint("BOTTOM", guide, "TOP", 0, 8)
-        text:SetWidth(260)
-        text:SetText("Put DroidDeck's left stick here")
-        local pulse = guide:CreateAnimationGroup()
-        pulse:SetLooping("BOUNCE")
-        local a = pulse:CreateAnimation("Alpha")
-        if a.SetFromAlpha then a:SetFromAlpha(1) a:SetToAlpha(0.45) else a:SetChange(-0.55) end
-        a:SetDuration(0.9)
-        guide.pulse = pulse
-    end
-    if show then
-        guide:ClearAllPoints()
-        local left = ns.db.handed ~= "left"
-        local W_, H = UIParent:GetWidth(), UIParent:GetHeight()
-        local x = (left and 0.13 or 0.87) * W_
-        guide:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x, H * 0.27)
-        guide:Show()
-        guide.pulse:Play()
-    else
-        guide:Hide()
-        guide.pulse:Stop()
-    end
-end
 
 -- Handles ---------------------------------------------------------------------------
 local function outline(parent, r, g, b, a)
@@ -131,29 +91,29 @@ end
 
 -- Toolbar ---------------------------------------------------------------------------
 local function buildToolbar()
-    local f = W.Panel("ForeverTouchEditBar", UIParent, 820, 176, "Edit layout")
+    local f = W.Panel("ForeverTouchEditBar", UIParent, 840, 196, "Edit layout")
     f:SetPoint("TOP", 0, -12)
     f:SetFrameStrata("FULLSCREEN_DIALOG")
 
     local hint = W.Font(f, 13, C.muted[1], C.muted[2], C.muted[3])
     hint:SetPoint("TOPLEFT", f.title, "BOTTOMLEFT", 0, -4)
-    hint:SetText("Drag a pink handle to move. Tap any spell button to change it, or drag one button onto another to swap.")
+    hint:SetText("Drag a pink handle to move a group. Tap a spell button to change it, or drag one onto another to swap.")
 
     local options = {}
     for _, name in ipairs(ns.groupOrder) do options[#options + 1] = { value = name, label = ns.groupLabels[name] } end
-    f.groupPicker = W.Segmented(f, 776, 40, options, function() return selected end, function(v)
+    f.groupPicker = W.Segmented(f, 792, 42, options, function() return selected end, function(v)
         selected = v
         refreshSelection()
     end)
-    f.groupPicker:SetPoint("TOPLEFT", 22, -72)
+    f.groupPicker:SetPoint("TOPLEFT", 24, -82)
 
     f.size = W.Stepper(f, 250, "Size", function()
         return math.floor((ns.Layout(selected).scale or 1) * 100 + 0.5)
     end, function(v)
         ns.Layout(selected).scale = v / 100
         ns.ApplyLayout()
-    end, 50, 170, 5, function(v) return v .. "%" end)
-    f.size:SetPoint("TOPLEFT", 22, -122)
+    end, 50, 200, 5, function(v) return v .. "%" end)
+    f.size:SetPoint("TOPLEFT", 24, -136)
 
     f.opacity = W.Stepper(f, 250, "Opacity", function()
         return math.floor((ns.Layout(selected).alpha or 1) * 100 + 0.5)
@@ -161,10 +121,10 @@ local function buildToolbar()
         ns.Layout(selected).alpha = v / 100
         ns.ApplyGroupAlpha()
     end, 25, 100, 5, function(v) return v .. "%" end)
-    f.opacity:SetPoint("LEFT", f.size, "RIGHT", 30, 0)
+    f.opacity:SetPoint("LEFT", f.size, "RIGHT", 24, 0)
 
     local done = W.Button(f, 110, 44, "Done", function() ns.ExitEditMode() end, "primary")
-    done:SetPoint("BOTTOMRIGHT", -20, 10)
+    done:SetPoint("BOTTOMRIGHT", -24, 16)
     local reset = W.Button(f, 120, 44, "Reset layout", function()
         ns.ResetLayout()
         refreshSelection()
@@ -233,6 +193,6 @@ ns.On("PLAYER_REGEN_DISABLED", function()
     end
 end)
 
-ns.OnLayoutApplied = function()
+table.insert(ns.layoutListeners, function()
     if toolbar and toolbar:IsShown() then refreshSelection() end
-end
+end)

@@ -64,9 +64,21 @@ def soft(u, v):
     return max(0.0, 1 - d) ** 1.8
 
 
+def round_square(u, v, r=0.36):
+    # rounded square filling the texture, corner radius r (in -1..1 units)
+    ax, ay = abs(u), abs(v)
+    edge = 0.985
+    if ax > edge or ay > edge:
+        return 0.0
+    cx, cy = edge - r, edge - r
+    if ax > cx and ay > cy:
+        return 1.0 if (ax - cx) ** 2 + (ay - cy) ** 2 <= r * r else 0.0
+    return 1.0
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
-    for name, fn in (("circle", circle), ("ring", ring), ("thinring", thin_ring), ("glow", glow), ("soft", soft)):
+    for name, fn in (("circle", circle), ("ring", ring), ("thinring", thin_ring), ("glow", glow), ("soft", soft), ("roundsquare", round_square)):
         path = os.path.join(OUT, name + ".tga")
         write_tga(path, SIZE, fn)
         print("wrote", os.path.relpath(path))

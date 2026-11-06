@@ -5,7 +5,7 @@ local ADDON, ns = ...
 _G.ForeverTouch = ns
 
 ns.name = ADDON
-ns.version = "1.0.2"
+ns.version = "1.1.0"
 ns.media = "Interface\\AddOns\\" .. ADDON .. "\\media\\"
 
 -- Theme -----------------------------------------------------------------------
@@ -90,6 +90,7 @@ ns.defaultLayouts = {
         utility = { fx = 0.62, fy = 0.11, scale = 0.95, alpha = 1 },
         menu = { fx = 0.965, fy = 0.90, scale = 1.0, alpha = 1 },
         camera = { fx = 0.975, fy = 0.62, scale = 0.95, alpha = 1 },
+        stick = { fx = 0.13, fy = 0.27, scale = 1.0, alpha = 1 },
     },
     -- Unfolded: near-square inner screen.
     main = {
@@ -97,6 +98,7 @@ ns.defaultLayouts = {
         utility = { fx = 0.50, fy = 0.08, scale = 0.80, alpha = 1 },
         menu = { fx = 0.935, fy = 0.92, scale = 0.85, alpha = 1 },
         camera = { fx = 0.95, fy = 0.55, scale = 0.80, alpha = 1 },
+        stick = { fx = 0.17, fy = 0.25, scale = 0.85, alpha = 1 },
     },
 }
 
@@ -113,6 +115,7 @@ ns.defaults = {
     showCamera = true,
     showEmptyButtons = true,
     pickerAllRanks = false,
+    cameraBlock = "around", -- "off" | "around" | "side": touches near the stick don't turn the camera
     layouts = ns.DeepCopy(ns.defaultLayouts),
 }
 
@@ -213,12 +216,15 @@ function ns.Layout(groupName)
     local l = layouts[profile][groupName]
     if not l then
         l = ns.DeepCopy(ns.defaultLayouts[profile][groupName] or { fx = 0.5, fy = 0.5, scale = 1, alpha = 1 })
+        -- Groups added in later versions must respect an existing left-hand layout.
+        if ns.db.handed == "left" then l.fx = 1 - l.fx end
         layouts[profile][groupName] = l
     end
     return l
 end
 
 -- Movable groups ----------------------------------------------------------------
+ns.layoutListeners = {} -- called after every layout change
 ns.groups = {}
 ns.groupOrder = {}
 ns.groupLabels = {}
@@ -257,7 +263,7 @@ function ns.ApplyLayout()
         for _, name in ipairs(ns.groupOrder) do positionGroup(name) end
         ns.ApplyGroupAlpha()
         if ns.UpdateGroupVisibility then ns.UpdateGroupVisibility() end
-        if ns.OnLayoutApplied then ns.OnLayoutApplied() end
+        for _, fn in ipairs(ns.layoutListeners) do fn() end
     end)
 end
 
@@ -306,7 +312,7 @@ local function checkProfile()
         local announce = lastProfile ~= nil
         lastProfile = p
         ns.ApplyLayout()
-        if announce then ns.Print("Switched to the %s layout.", ns.profileLabels[p]) end
+        if announce and ns.W then ns.W.Toast("Switched to the " .. ns.profileLabels[p]:lower() .. " layout") end
     end
 end
 ns.CheckProfile = checkProfile

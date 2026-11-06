@@ -95,7 +95,7 @@ local function bullet(parent, anchor, text, y)
 end
 
 local function buildWizard()
-    local f = W.Panel("ForeverTouchSetup", UIParent, 700, 520, "Welcome to Forever Touch")
+    local f = W.Panel("ForeverTouchSetup", UIParent, 700, 610, "Welcome to Forever Touch")
     f:SetPoint("CENTER", 0, 20)
     f:SetFrameStrata("FULLSCREEN_DIALOG")
     f:Hide()
@@ -107,8 +107,8 @@ local function buildWizard()
     f.pages = {}
     local function page()
         local p = CreateFrame("Frame", nil, f)
-        p:SetPoint("TOPLEFT", 26, -86)
-        p:SetPoint("BOTTOMRIGHT", -26, 76)
+        p:SetPoint("TOPLEFT", 26, -94)
+        p:SetPoint("BOTTOMRIGHT", -26, 84)
         p:Hide()
         f.pages[#f.pages + 1] = p
         return p
@@ -123,17 +123,70 @@ local function buildWizard()
     intro:SetJustifyH("LEFT")
     intro:SetText("Spells sit in a big wheel under one thumb. Your other thumb moves your character with DroidDeck's on-screen stick.")
 
+    -- Mini phone showing where things go; follows the thumb choice live.
+    local phone = CreateFrame("Frame", nil, p1)
+    phone:SetSize(300, 120)
+    phone:SetPoint("TOP", intro, "BOTTOM", 0, -16)
+    phone:SetPoint("LEFT", p1, "CENTER", -150, 0)
+    W.RoundRect(phone, "BACKGROUND", 16, 1, 1, 1, 0.16, 0)
+    W.RoundRect(phone, "BACKGROUND", 14, 0.11, 0.14, 0.20, 1, 1, 3)
+    local stickDot = W.Tex(phone, "ARTWORK", ns.media .. "ring", C.accent[1], C.accent[2], C.accent[3], 1)
+    stickDot:SetSize(54, 54)
+    local stickNub = W.Tex(phone, "ARTWORK", ns.media .. "circle", 1, 1, 1, 0.5, 1)
+    stickNub:SetSize(20, 20)
+    stickNub:SetPoint("CENTER", stickDot, "CENTER")
+    local stickText = W.Font(phone, 11, C.muted[1], C.muted[2], C.muted[3])
+    stickText:SetText("Move")
+    local wheel = {}
+    for i = 1, 6 do
+        local d = W.Tex(phone, "ARTWORK", ns.media .. "circle", C.gold[1], C.gold[2], C.gold[3], i == 1 and 1 or 0.75)
+        local size = i == 1 and 26 or 15
+        d:SetSize(size, size)
+        wheel[i] = d
+    end
+    local wheelText = W.Font(phone, 11, C.muted[1], C.muted[2], C.muted[3])
+    wheelText:SetText("Spells")
+    local menuDot = W.Tex(phone, "ARTWORK", ns.media .. "circle", C.accent[1], C.accent[2], C.accent[3], 0.9)
+    menuDot:SetSize(12, 12)
+    local function drawPhone()
+        local left = ns.db.handed ~= "left"
+        local sx = left and 1 or -1
+        local stickPoint, wheelPoint = left and "BOTTOMLEFT" or "BOTTOMRIGHT", left and "BOTTOMRIGHT" or "BOTTOMLEFT"
+        stickDot:ClearAllPoints()
+        stickDot:SetPoint("CENTER", phone, stickPoint, 52 * sx, 46)
+        stickText:ClearAllPoints()
+        stickText:SetPoint("TOP", stickDot, "BOTTOM", 0, -2)
+        -- big button in the corner, five small ones on an arc above and inward
+        local angles = { 0, 95, 115, 135, 155, 175 }
+        for i, d in ipairs(wheel) do
+            d:ClearAllPoints()
+            local a = math.rad(angles[i])
+            local r = (i == 1) and 0 or 36
+            local dx, dy = r * math.cos(a), r * math.sin(a) -- dx <= 0: towards the middle
+            local x = left and (-34 + dx) or (34 - dx)
+            d:SetPoint("CENTER", phone, wheelPoint, x, 30 + dy)
+        end
+        wheelText:ClearAllPoints()
+        wheelText:SetPoint("TOP", wheel[1], "BOTTOM", 0, -2)
+        menuDot:ClearAllPoints()
+        menuDot:SetPoint("CENTER", phone, left and "TOPRIGHT" or "TOPLEFT", -18 * sx, -16)
+    end
+    drawPhone()
+
     local handLabel = W.Font(p1, 15, C.gold[1], C.gold[2], C.gold[3])
-    handLabel:SetPoint("TOPLEFT", intro, "BOTTOMLEFT", 0, -22)
+    handLabel:SetPoint("TOPLEFT", intro, "BOTTOMLEFT", 0, -150)
     handLabel:SetText("Which thumb casts spells?")
     local hand = W.Segmented(p1, 640, 48, {
         { value = "right", label = "Right thumb (stick on the left)" },
         { value = "left", label = "Left thumb (stick on the right)" },
-    }, function() return ns.db.handed end, function(v) ns.SetHanded(v) end)
+    }, function() return ns.db.handed end, function(v)
+        ns.SetHanded(v)
+        drawPhone()
+    end)
     hand:SetPoint("TOPLEFT", handLabel, "BOTTOMLEFT", 0, -10)
 
     local screenLabel = W.Font(p1, 15, C.gold[1], C.gold[2], C.gold[3])
-    screenLabel:SetPoint("TOPLEFT", hand, "BOTTOMLEFT", 0, -26)
+    screenLabel:SetPoint("TOPLEFT", hand, "BOTTOMLEFT", 0, -20)
     screenLabel:SetText("Screen")
     local detected = W.Font(p1, 13, C.muted[1], C.muted[2], C.muted[3])
     detected:SetPoint("LEFT", screenLabel, "RIGHT", 12, 0)
@@ -150,6 +203,7 @@ local function buildWizard()
     screenNote:SetTextColor(C.muted[1], C.muted[2], C.muted[3])
     p1:SetScript("OnShow", function()
         detected:SetText("Detected now: " .. ns.profileLabels[ns.DetectProfile()])
+        drawPhone()
     end)
 
     -- Page 2: movement ------------------------------------------------------------
@@ -268,5 +322,6 @@ function ns.FinishSetup()
     ns.db.setupDone = true
     if first then
         ns.Print("Ready! Tap a + button to add a spell. Open the menu (top corner) > Edit layout to move things.")
+        W.Toast("You're set - tap a + to add a spell", 4)
     end
 end
