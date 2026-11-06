@@ -87,10 +87,10 @@ ns.defaultLayouts = {
     },
     -- Unfolded: near-square inner screen.
     main = {
-        cluster = { fx = 0.83, fy = 0.24, scale = 0.80, alpha = 1 },
-        utility = { fx = 0.56, fy = 0.08, scale = 0.80, alpha = 1 },
-        menu = { fx = 0.97, fy = 0.93, scale = 0.85, alpha = 1 },
-        camera = { fx = 0.975, fy = 0.55, scale = 0.80, alpha = 1 },
+        cluster = { fx = 0.78, fy = 0.24, scale = 0.78, alpha = 1 },
+        utility = { fx = 0.50, fy = 0.08, scale = 0.80, alpha = 1 },
+        menu = { fx = 0.935, fy = 0.92, scale = 0.85, alpha = 1 },
+        camera = { fx = 0.95, fy = 0.55, scale = 0.80, alpha = 1 },
     },
 }
 

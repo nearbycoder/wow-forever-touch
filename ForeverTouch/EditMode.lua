@@ -7,6 +7,7 @@ local C = ns.color
 local M = ns.media
 
 local handles = {}
+ns.editHandles = handles
 local toolbar, guide
 local selected = "cluster"
 
@@ -62,8 +63,26 @@ local function outline(parent, r, g, b, a)
     end
 end
 
+-- Big groups get their handle just above them; small ones (menu,
+-- camera) get it beside them, on the side facing the middle of the screen,
+-- so the handle never covers the button you're moving.
+local function placeHandle(name, h)
+    local group = ns.groups[name]
+    h:ClearAllPoints()
+    if group:GetWidth() * group:GetScale() < 120 then
+        if ns.Layout(name).fx > 0.5 then
+            h:SetPoint("RIGHT", group, "LEFT", -10, 0)
+        else
+            h:SetPoint("LEFT", group, "RIGHT", 10, 0)
+        end
+    else
+        h:SetPoint("BOTTOM", group, "TOP", 0, 6)
+    end
+end
+
 local function refreshSelection()
     for name, h in pairs(handles) do
+        placeHandle(name, h)
         local on = (name == selected)
         h.box.fill:SetColorTexture(C.accent[1], C.accent[2], C.accent[3], on and 0.12 or 0.04)
         h:SetAlpha(on and 1 or 0.75)
@@ -90,7 +109,6 @@ local function createHandle(name)
     h.icon:SetTexture("Interface\\CURSOR\\UI-Cursor-Move")
     h.icon:SetTexCoord(0, 1, 0, 1)
     h.plate:SetVertexColor(C.accent[1], C.accent[2], C.accent[3], 1)
-    h:SetPoint("CENTER", group, "TOP", 0, 0)
     local label = W.Font(h, 12)
     label:SetPoint("BOTTOM", h, "TOP", 0, 4)
     label:SetText(ns.groupLabels[name])

@@ -176,9 +176,11 @@ step("edit mode", function()
     local before = ns.Layout("cluster").fx
     local handle
     for _, c in ipairs(_G.UIParent._children) do
-        if c._isFrame and c._scripts.OnMouseDown and c._points[1] and c._points[1][2] == cluster then handle = c end
+        if c == ns.editHandles.cluster then handle = c end
     end
     check(handle ~= nil, "cluster has a drag handle")
+    local mp = ns.editHandles.menu._points[1]
+    check(mp and mp[1] == "RIGHT" and mp[3] == "LEFT", "menu handle sits beside the menu button, not on it")
     M.fire(handle, "OnMouseDown", "LeftButton")
     M.fire(handle, "OnMouseUp", "LeftButton")
     check(ns.Layout("cluster").fx ~= before, "dragging updates the saved position")

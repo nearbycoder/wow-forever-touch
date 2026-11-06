@@ -1,111 +1,244 @@
-<img src="assets/icon.svg" width="64" height="64" alt="">
+<p align="center">
+  <img src="assets/icon.svg" width="88" height="88" alt="Forever Touch icon">
+</p>
 
-# Forever Touch
+<h1 align="center">Forever Touch</h1>
 
-Touch screen controls for **World of Warcraft: Forever**. Built for playing through DroidDeck on a Galaxy Z Fold 8, but it works on any touch device that sends taps to the game as mouse clicks.
+<p align="center">
+  <b>Touch screen controls for World of Warcraft: Forever.</b><br>
+  A thumb-sized spell wheel, one-tap menus and a guided setup for phones and foldables.<br>
+  Built for playing through <a href="https://www.techspot.com/downloads/7924-droiddeck.html">DroidDeck</a> on a Galaxy Z Fold 8.
+</p>
 
-```
- ┌──────────────────────────────────────────────────────────────┐
- │                                                       (≡)    │  ← menu: bags, spellbook, map…
- │                                                       (+)    │
- │                                                       (-)    │  ← camera zoom (hold to repeat)
- │                                          (11)   (6)          │
- │                                              (7)  (2)        │
- │   ╭─────╮                                  (8)  (3)  ²       │  ← tap the small number to
- │   │stick│  ← DroidDeck on-screen stick     (9) (4)           │     flip spell pages
- │   ╰─────╯     (run + A to jump)         (12) (10)(5) ( 1 )   │  ← big thumb button
- │              (Target) (Assist) (Clear)                       │
- └──────────────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <img src="docs/images/demo.gif" alt="Animated preview: tapping the spell wheel, a cooldown sweep, flipping spell pages and opening the menu" width="960">
+</p>
 
-## What you get
+> **About the images.** These are rendered UI previews, not in-game captures. The position and size of every button comes from the addon's real Lua code, run through the mock WoW client in `tests/` (see [How the previews are made](#how-the-previews-are-made)). The game world, character and unit frames are stand-in drawings, and the icons are original placeholders, not Blizzard art. Screenshots and recordings from real devices are very welcome. Please open a PR!
 
-- **Spell wheel**: one big button plus 11 around it, sized for a thumb. It shows cooldown sweeps with numbers, range (red), out-of-mana (blue), stack counts, an auto-attack glow and proc glows.
-- **Pages**: page 1 follows your main bar, so warrior stances, druid forms and rogue stealth swap automatically. Pages 2 and 3 can show any other action bar. Tap the small number on the wheel to flip pages, even mid-fight.
-- **Tap to assign**: tap an empty **+** button and pick a spell, item or macro from a big grid. You don't need to drag from the tiny spellbook (though that works too). Classic rank spam is hidden by default, so you see the best rank only.
-- **Menu**: a round button opens a tile grid for Character, Bags, Spellbook, Talents, Quests, Map, Social, Chat, Close windows, Edit layout, Touch settings and Game menu. It works in combat.
-- **Target row**: Target nearest enemy, Assist and Clear, plus Pet attack for hunters and warlocks.
-- **Edit layout**: drag the pink handles to move things, use + / − to resize, and change opacity. Tap any spell button to change it, or drag one button onto another to swap them.
-- **Fold aware**: the folded (cover) screen and the unfolded (inner) screen each keep their own layout, and the addon switches between them when you open or close the phone.
-- **Left-handed mode** mirrors everything.
-- **Guided setup** on first login.
+---
 
-## Running and jumping: how movement works
+## Contents
 
-Blizzard does not let any addon move or jump your character. That rule stops bots, and it applies to every addon. Forever Touch uses WoW's own controller support instead:
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [How movement works](#how-movement-works-running-and-jumping)
+- [Install](#install)
+- [Setting up DroidDeck](#setting-up-droiddeck)
+- [Using it](#using-it)
+- [Settings and commands](#settings-and-commands)
+- [Limits worth knowing](#limits-worth-knowing)
+- [Troubleshooting](#troubleshooting)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Features
+
+| | |
+|---|---|
+| **Spell wheel** | 12 buttons: one big thumb button, an inner arc of 4, an outer arc of 5 and 2 minis. Together they hold exactly one action bar. |
+| **Live button state** | Round cooldown sweeps with seconds, red tint when out of range, blue when out of mana or rage, stack counts, a gold glow for auto-attack and a pink glow for procs. |
+| **Pages** | Page 1 follows your main bar, so warrior stances, druid forms and rogue stealth swap automatically. Pages 2 and 3 show any other action bar. Tap the little number on the wheel to flip pages. It works in combat. |
+| **Tap to assign** | Tap an empty **+** button and choose a spell, usable item or macro from a big grid. Classic's rank lists show only the best rank by default. |
+| **One-tap menu** | Character, Bags, Spellbook, Talents, Quests, Map, Social, Chat, Close windows, Edit layout, Touch settings and Game menu. It works in combat, and tapping outside closes it. |
+| **Target row** | Target nearest enemy, Assist, Clear target, plus Pet attack for hunters and warlocks. |
+| **Camera** | Drag on empty ground to turn the camera. The + / − buttons zoom, and holding one keeps zooming. |
+| **Edit layout** | Drag the pink handles to move groups and resize them from 50 to 170%. Set opacity, tap a button to reassign it, or drag one button onto another to swap. |
+| **Fold aware** | The folded (cover) and unfolded (inner) screens each keep their own layout and switch automatically when you open or close the phone. |
+| **Left-handed mode** | Mirrors the whole layout. |
+| **Guided setup** | A 3-step guide on first login covers your thumbs, movement and comfort settings. |
+| **Combat safe** | Built on Blizzard's secure templates. Anything that can't change in combat waits until the fight ends instead of erroring. |
+
+## Screenshots
+
+### Folded: cover screen
+The default layout: spell wheel under the right thumb, DroidDeck's stick under the left, and the target row in between.
+
+![Folded cover screen layout](docs/images/hud-folded.png)
+
+### Unfolded: inner screen
+The nearly square inner screen gets its own layout, which switches automatically when you unfold.
+
+<p align="center"><img src="docs/images/hud-unfolded.png" alt="Unfolded inner screen layout" width="560"></p>
+
+### Left-handed
+One toggle mirrors everything.
+
+![Left-handed layout](docs/images/hud-folded-left.png)
+
+### Menu
+Every game window is one tap away, even in combat.
+
+![Menu](docs/images/menu.png)
+
+### Tap to assign
+Tap an empty button and pick from your spellbook, usable items or macros.
+
+![Spell picker](docs/images/spell-picker.png)
+
+### Edit layout
+Pink handles move groups, the toolbar resizes them, and the pink circle shows where DroidDeck's stick fits.
+
+![Edit layout mode](docs/images/edit-layout.png)
+
+### Guided setup
+Step 2 switches on controller movement and walks you through the DroidDeck side.
+
+![Setup guide, movement step](docs/images/setup-movement.png)
+
+## How movement works (running and jumping)
+
+**Blizzard does not allow any addon to move or jump your character.** The protection exists to stop bots and applies to every addon, so an addon can't draw a working joystick. Forever Touch uses the path Blizzard does allow, which is WoW's own controller support:
 
 1. The setup guide turns on WoW's controller support (`GamePadEnable`) and binds **A = Jump**.
-2. In DroidDeck, turn on the on-screen controls and keep the **left stick** and the **A** button.
-3. In **Edit layout** (or setup step 2), a pink circle shows where to put the stick so it doesn't overlap the spell wheel.
+2. DroidDeck's on-screen stick shows up to the game as a controller, so the left stick gives smooth **analog running**: half-push to walk, full push to run.
+3. Your other thumb stays on the spell wheel, so you can run and cast at the same time.
 
-This gives smooth analog running, not a click-to-move workaround. If the stick moves the mouse instead of your character, set the game's Steam Input layout to **Gamepad**.
+Two optional extras:
 
-**Camera:** drag one finger across empty ground. **Zoom:** pinch (if DroidDeck maps it to the mouse wheel) or use the + / − buttons.
-
-Optional **tap-to-move** (WoW's click-to-move) is in setup step 2. It needs a right-click, so map DroidDeck's long-press to right click.
+- **Tap-to-move:** WoW's click-to-move, toggled in setup step 2. It walks to wherever you tap and needs DroidDeck's long-press mapped to right click.
+- **Screen keys:** if your DroidDeck build has on-screen keyboard keys, `W A S D` and `Space` work as usual.
 
 ## Install
 
-1. Download or build `ForeverTouch-<version>.zip` (`python3 tools/build.py` writes it to `dist/`).
-2. Copy the `ForeverTouch` folder into the game's AddOns folder: `World of Warcraft/<forever game folder>/Interface/AddOns/`. Under DroidDeck, this is inside the Windows drive of the prefix where you installed Battle.net.
-3. On the character screen, open **AddOns** and make sure Forever Touch is ticked.
-4. Log in. The setup guide opens after a couple of seconds.
+1. **Download** the latest zip from [Releases](../../releases), or build one yourself (see [Development](#development)).
+2. **Copy** the `ForeverTouch` folder into the game's AddOns folder:
+   ```
+   World of Warcraft/<forever game folder>/Interface/AddOns/ForeverTouch/
+   ```
+   Under DroidDeck, the `World of Warcraft` folder is on the Windows drive of the Proton prefix where you installed Battle.net.
+3. On the character select screen, open **AddOns** and make sure **Forever Touch** is ticked.
+4. **Log in.** The setup guide opens after about two seconds.
 
-### If it says "Out of date"
+### "Out of date" warning
+The TOC declares `## Interface: 16001, 16000, 11508`, which is a best guess for WoW: Forever 1.60.x. If the addon list says it's out of date, tick **Load out of date AddOns**, or set the exact number:
 
-The TOC lists Interface `16001, 16000, 11508`, which is a best guess for WoW: Forever 1.60.x. If the addon shows as out of date, either tick **Load out of date AddOns**, or find your client's number in game with:
-
+```sh
+# in game:   /dump (select(4, GetBuildInfo()))
+tools/set-interface.sh 16001   # use the number the game printed
 ```
-/dump (select(4, GetBuildInfo()))
-```
 
-then run `tools/set-interface.sh <number>`.
+## Setting up DroidDeck
 
-## Commands
+DroidDeck is evolving quickly, so menu names may differ slightly in your version.
+
+1. **On-screen controls:** during play, swipe in from the right edge to open the session drawer and turn on the on-screen controls.
+2. **Keep it minimal:** keep the **left stick** and the **A** button and hide the rest. Forever Touch handles everything else.
+3. **Place the stick** on the pink circle that appears during setup step 2 and in Edit layout.
+4. **Gestures:** keep **tap → left click**. Optionally map **long-press → right click** (for tap-to-move) and **pinch → mouse wheel** (zoom).
+5. **Steam Input:** if the stick moves the mouse pointer instead of your character, set this game's controller layout to **Gamepad**.
+
+## Using it
+
+| To… | Do this |
+|---|---|
+| Cast a spell | Tap its button. With *Cast the moment you touch* on, it fires on touch-down. |
+| Put a spell on an empty button | Tap the **+**, then tap a spell, item or macro. |
+| Change a button that has a spell | Open the **menu → Edit layout**, then tap the button. |
+| Swap two buttons | In Edit layout, drag one button onto the other. |
+| Flip spell pages | Tap the small number next to the big button. |
+| Target the nearest enemy | Tap **Target**. |
+| Talk, loot or open things | Tap them in the world (needs *Tap to interact*). |
+| Turn the camera | Drag one finger across empty ground. |
+| Zoom | Pinch, or use **+ / −** (hold to keep zooming). |
+| Move things around | Menu → **Edit layout**, then drag the pink handles. |
+| Chat | Menu → **Chat**, then open DroidDeck's keyboard. |
+
+## Settings and commands
+
+Open the settings from the menu tile **Touch settings**, with `/ft`, or under **Options → AddOns → Forever Touch**.
+
+- **Screen layout:** Auto, Folded or Unfolded.
+- **Spell thumb:** Right or Left.
+- **Spell wheel pages:** 1 to 3. Page 1 is always the main bar. Pages 2 and 3 can be the bottom left, bottom right, right, right 2 or action bar 2.
+- **Controls:** show or hide the target buttons, the camera buttons and empty slots. *Dim out of combat* and *Hide default action bars* are here too. Hiding the bars keeps the XP and pet bars, and showing them again needs `/reload`.
+- **Controller movement** and **Tap to interact**, when your client supports them.
+
+The setup guide also offers *Auto loot*, *Cast the moment you touch* and *Cooldown numbers*. Each one only appears if your client has the setting.
 
 | Command | What it does |
 |---|---|
-| `/ft` | Touch settings |
-| `/ft edit` | Edit layout (move, resize, assign spells) |
+| `/ft` | Open settings |
+| `/ft edit` | Edit layout: move, resize and assign buttons |
 | `/ft setup` | Run the setup guide again |
 | `/ft reset` | Reset the current screen's layout |
-
-The settings are also under **Options → AddOns → Forever Touch**.
-
-## Recommended settings (offered in setup)
-
-- **Tap to interact**: one tap talks to NPCs, loots and opens objects.
-- **Auto loot**
-- **Cast the moment you touch**: casts on finger-down instead of on release.
-- **Cooldown numbers**
-- **Hide default action bars**: Forever Touch replaces them. The XP and pet bars stay. Turning this off again needs `/reload`.
-
-Each one is shown only if your client has the setting.
+| `/ft help` | List commands |
 
 ## Limits worth knowing
 
-- **One finger at a time?** That depends on DroidDeck. Touches on its on-screen stick are handled separately, so you can run with one thumb and cast with the other. Two taps on WoW buttons at the same moment arrive as a single mouse, though.
-- Buttons can't be rearranged or reassigned **during combat**. Blizzard locks secure buttons then. Casting, page flips and the menu all work in combat, and edit mode closes automatically when a fight starts.
-- Folded/unfolded auto-switching reads the game's screen size. If DroidDeck runs the game at a fixed resolution, choose **Folded** or **Unfolded** in settings yourself.
+- **No addon can move your character.** Movement runs through WoW's controller support, as described [above](#how-movement-works-running-and-jumping).
+- **Changes are locked during combat.** Blizzard locks secure buttons in combat. Casting, page flips and the menu all still work, but assigning or moving buttons doesn't. Edit mode closes by itself when a fight starts.
+- **Multi-touch.** DroidDeck handles its stick separately, so running while casting works. Two taps on WoW buttons at the very same moment arrive as one mouse, though.
+- **Auto fold switching** reads the game's screen size. If DroidDeck runs the game at a fixed resolution, choose *Folded* or *Unfolded* in settings yourself.
+- **Not yet verified on a real device.** The logic is covered by the mock-client test suite, and testers with WoW: Forever on Android are wanted.
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| The addon isn't in the AddOns list | Check the folder name. It must be exactly `Interface/AddOns/ForeverTouch/ForeverTouch.toc`, not nested twice. |
+| "Out of date" | Tick *Load out of date AddOns*, or run `tools/set-interface.sh` ([details](#out-of-date-warning)). |
+| The stick moves the mouse pointer | Set the Steam Input layout for the game to **Gamepad**. |
+| A doesn't jump | Run `/ft setup`, go to step 2 and tap *Turn on controller movement* again. |
+| Taps cast twice or not at all | Toggle *Cast the moment you touch* in `/ft setup` step 3. |
+| Buttons are off screen after unfolding | `/ft reset` resets that screen's layout. |
+| "Can't be changed during combat" | Wait for combat to end. This is Blizzard's rule. |
 
 ## Development
 
-```
-sh tests/run_all.sh        # syntax check + mock-client test suite (Lua 5.1)
-python3 tools/build.py     # package dist/ForeverTouch-<version>.zip
-python3 tools/make_textures.py   # regenerate media/*.tga
+Requirements: **Lua 5.1** (the version WoW uses) and **Python 3**. Making the README previews also needs **Google Chrome** and **ffmpeg**.
+
+```sh
+sh tests/run_all.sh                 # syntax check, mock-client suite in 3 click modes, on-screen layout check
+python3 tools/build.py              # package dist/ForeverTouch-<version>.zip
+python3 tools/make_textures.py      # regenerate ForeverTouch/media/*.tga
+sh tools/preview/capture.sh         # regenerate docs/images/* (screenshots + demo.gif)
 ```
 
-`tests/mock_wow.lua` is a small fake WoW client. It models frames, secure snippets, state drivers (stance paging), wrapped clicks and **combat lockdown**: any insecure change to a protected frame during combat fails the run with `ADDON_ACTION_BLOCKED`. The suite runs in all three click modes: cast on press, cast on release, and legacy clients.
+### The mock WoW client
+`tests/mock_wow.lua` is a small fake WoW client. It models frames, scripts and attributes, Blizzard's restricted snippet environment (state drivers, `ChildUpdate`, frame refs, wrapped clicks) and, most importantly, **combat lockdown**. Any insecure change to a protected frame during combat fails the run with `ADDON_ACTION_BLOCKED`, the same class of bug that breaks addons in the real game. `tests/run.lua` covers:
+
+- casting, page flips in combat and stance paging
+- the spell picker: rank dedupe, items, macros, assigning and clearing
+- the menu in combat: secure micro button clicks, closing after a tile, tapping outside
+- edit mode: dragging, resizing, swapping buttons, and closing automatically on combat
+- left-handed mirroring, fold/unfold switching, and layout changes deferred until after combat
+- setup: controller movement and the A = Jump binding
+
+The suite runs in all three click modes: cast on press, cast on release, and legacy clients.
+
+### How the previews are made
+`tools/preview/export_layout.lua` loads the real addon in the mock client, logs in, and exports the on-screen rectangle of every control for the folded, unfolded, left-handed and edit-mode layouts. The export **fails if any control would be off screen**. `tools/preview/preview.html` draws those rectangles over a stand-in scene, and `capture.sh` screenshots it with headless Chrome and builds the GIF with ffmpeg.
+
+### Project layout
 
 | File | Purpose |
 |---|---|
-| `Core.lua` | Saved settings, events, combat-safe queue, Fold screen profiles |
-| `Widgets.lua` | Round buttons with press/ripple feedback, panels, toggles, steppers |
-| `ActionCluster.lua` | Secure spell wheel, paging, cooldown/range/proc visuals |
-| `Utility.lua` | Target row and camera zoom |
-| `Menu.lua` | Secure tile menu |
-| `SpellPicker.lua` | Tap-to-assign grid for spells, items and macros |
-| `EditMode.lua` | Move/resize/assign mode and the stick placement guide |
-| `Setup.lua` | First-run guide, controller movement, recommended settings |
-| `Settings.lua` | Settings panel, options entry, slash commands |
+| `ForeverTouch/Core.lua` | Saved settings, event plumbing, combat-safe queue, Fold screen profiles |
+| `ForeverTouch/Widgets.lua` | Round buttons with press/ripple feedback, panels, toggles, steppers |
+| `ForeverTouch/ActionCluster.lua` | Secure spell wheel, paging snippets, cooldown/range/proc visuals |
+| `ForeverTouch/Utility.lua` | Target row and camera zoom |
+| `ForeverTouch/Menu.lua` | Secure tile menu |
+| `ForeverTouch/SpellPicker.lua` | Tap-to-assign grid for spells, items and macros |
+| `ForeverTouch/EditMode.lua` | Move/resize/assign mode and the stick guide |
+| `ForeverTouch/Setup.lua` | First-run guide, controller movement, recommended settings, hiding the default bars |
+| `ForeverTouch/Settings.lua` | Settings panel, Blizzard options entry, slash commands |
+| `tests/` | Mock client and test suite |
+| `tools/` | Build, texture generation, interface number and preview tooling |
+
+## Contributing
+
+Issues and PRs are welcome, especially:
+
+- **Real-device screenshots or recordings** (Galaxy Fold or any Android/DroidDeck setup) to replace the rendered previews
+- the confirmed **Interface number** and any API differences in WoW: Forever
+- DroidDeck setup notes for other devices
+
+Please run `sh tests/run_all.sh` before opening a PR.
+
+## License
+
+[MIT](LICENSE) © 2026 Josh Hamilton.
+
+World of Warcraft is a trademark of Blizzard Entertainment, Inc. This is an unofficial fan project and is not affiliated with or endorsed by Blizzard Entertainment or the DroidDeck project.
